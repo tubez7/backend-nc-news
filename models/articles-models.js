@@ -15,13 +15,18 @@ exports.fetchArticleById = (articleId) => {
 };
 
 exports.updateArticleById = (articleId, vote) => {
-  console.log(articleId, vote, "inside the model");
   return db
     .query(
       `UPDATE articles SET votes = votes + $2 WHERE article_id = $1 RETURNING *; `,
       [articleId, vote]
     )
     .then((article) => {
+      if (article.rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `article ${articleId} not found`,
+        });
+      }
       console.log(article, "article"); //result object
       console.log(article.rows, `article.rows`); //returned array from SQL query
       console.log(article.rows[0]); //object at 0 index
