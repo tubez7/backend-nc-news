@@ -8,7 +8,7 @@ const {
 
 const { getTopics } = require("./controllers/topics-controllers.js");
 
-const { getArticleById } = require("./controllers/articles-controllers.js");
+const { getArticleById, patchArticleById } = require("./controllers/articles-controllers.js");
 
 //----APP-------------------------
 
@@ -19,6 +19,8 @@ app.use(express.json());
 app.get(`/api/topics`, getTopics); //passes to controller
 
 app.get(`/api/articles/:article_id`, getArticleById);
+
+app.patch(`/api/articles/:article_id`, patchArticleById);
 
 //------GENERIC ENDPOINT ERROR CATCH-------------------
 

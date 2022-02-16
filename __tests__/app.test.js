@@ -7,6 +7,8 @@ const testData = require("../db/data/test-data/index");
 afterAll(() => db.end());
 beforeEach(() => seed(testData));
 
+//----------GENERIC SERVER ERROR
+
 describe("Generic invalid endpoint error", () => {
   test("Entering invalid endpoint should return 404 path not found", () => {
     return request(app)
@@ -18,6 +20,8 @@ describe("Generic invalid endpoint error", () => {
       });
   });
 });
+
+//-------GET REQUESTS ON TOPICS
 
 describe("GET request on /api/topics", () => {
   test("should respond with status 200 and an array of all topic objects, each of which should have slug and description properties", () => {
@@ -41,6 +45,8 @@ describe("GET request on /api/topics", () => {
   });
 });
 
+//---------GET REQUESTS ON ARTICLES
+
 describe("GET request on /api/articles/:article_id", () => {
   test("should respond with status 200 and a single article object on a key of article", () => {
     const articleId = 1;
@@ -50,13 +56,13 @@ describe("GET request on /api/articles/:article_id", () => {
       .then(({ body }) => {
         expect(body.article).toBeInstanceOf(Object);
         expect(body.article).toEqual({
-          author: expect.any(String),
-          title: expect.any(String),
-          article_id: expect.any(Number),
-          body: expect.any(String),
-          topic: expect.any(String),
-          created_at: expect.any(String),
-          votes: expect.any(Number),
+          author: "butter_bridge",
+          title: "Living in the shadow of a great man",
+          article_id: 1,
+          body: "I find this existence challenging",
+          topic: "mitch",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 100,
         });
       });
   });
@@ -81,6 +87,52 @@ describe("ERROR handling GET request on /api/articles/:article_id", () => {
       .then(({ body }) => {
         console.log(body, "404 INSIDE TEST SUITE");
         expect(body.msg).toBe(`article ${articleId} not found`);
+      });
+  });
+});
+
+//----------PATCH REQUESTS ON ARTICLES
+
+describe.only("PATCH request on /api/articles/:article_id", () => {
+  test("status: 201 - request body object should update the vote property of the article and respond with an article object on key of article", () => {
+    const articleId = 1;
+    const vote = { inc_votes: 1 };
+    return request(app)
+      .patch(`/api/articles/${articleId}`)
+      .send(vote)
+      .expect(201)
+      .then((res) => {
+        console.log(res.body.article, "response body in test suite");
+        expect(res.body.article).toBeInstanceOf(Object);
+        expect(res.body.article).toEqual({
+          author: "butter_bridge",
+          title: "Living in the shadow of a great man",
+          article_id: 1,
+          body: "I find this existence challenging",
+          topic: "mitch",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 101,
+        });
+      });
+  });
+  test("should respond the same with a minus vote patch request", () => {
+    const articleId = 1;
+    const vote = { inc_votes: -100 };
+    return request(app)
+      .patch(`/api/articles/${articleId}`)
+      .send(vote)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article).toBeInstanceOf(Object);
+        expect(body.article).toEqual({
+          author: "butter_bridge",
+          title: "Living in the shadow of a great man",
+          article_id: 1,
+          body: "I find this existence challenging",
+          topic: "mitch",
+          created_at: "2020-07-09T20:11:00.000Z",
+          votes: 0,
+        });
       });
   });
 });
