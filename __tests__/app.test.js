@@ -7,6 +7,9 @@ const testData = require("../db/data/test-data/index");
 afterAll(() => db.end());
 beforeEach(() => seed(testData));
 
+
+
+
 //----------GENERIC SERVER ERROR
 
 describe("Generic invalid endpoint error", () => {
@@ -152,9 +155,14 @@ describe("PATCH request on /api/articles/:article_id", () => {
   });
 });
 
+
+
+
+
 //---------PATCH REQUEST ERRORS ON ARTICLE_ID
 
 describe("ERROR handling patch request on /api/articles/:article_id", () => {
+
   test("should respond with status 400 - bad request when article_id is not a number", () => {
     const articleId = "NOT_A_NUMBER";
     const vote = { inc_votes: 1 };
