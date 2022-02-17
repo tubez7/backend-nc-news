@@ -8,7 +8,7 @@ const {
 
 const { getTopics } = require("./controllers/topics-controllers.js");
 
-const { getArticleById, patchArticleById } = require("./controllers/articles-controllers.js");
+const { getArticleById, patchArticleById, getArticles } = require("./controllers/articles-controllers.js");
 
 const { getUsers } = require("./controllers/users-controllers");
 
@@ -19,6 +19,8 @@ const app = express();
 app.use(express.json());
 
 app.get(`/api/topics`, getTopics); //passes to controller
+
+app.get(`/api/articles`, getArticles);
 
 app.get(`/api/articles/:article_id`, getArticleById);
 

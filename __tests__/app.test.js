@@ -47,6 +47,30 @@ describe("GET request on /api/topics", () => {
 
 //---------GET REQUESTS ON ARTICLES
 
+// describe.only("GET request on /api/articles", () => {
+//   test("should respond with status 200 and an array of all article objects on a key of articles", () => {
+//     return request(app)
+//       .get("/api/articles")
+//       .expect(200)
+//       .then(({ body }) => {
+//         expect(body.articles).toBeInstanceOf(Array);
+//         expect(body.articles).toHaveLength(12);
+//         body.articles.forEach((article) => {
+//           expect(article).toEqual(
+//             expect.objectContaining({
+//               author: expect.any(String),
+//               title: expect.any(String),
+//               article_id: expect.any(Number),
+//               topic: expect.any(String),
+//               created_at: expect.any(String),
+//               votes: expect.any(Number),
+//             })
+//           );
+//         });
+//       });
+//   });
+// });
+
 describe("GET request on /api/articles/:article_id", () => {
   test("should respond with status 200 and a single article object on a key of article", () => {
     const articleId = 1;
@@ -204,7 +228,7 @@ describe("ERROR handling patch request on /api/articles/:article_id", () => {
   });
 });
 
-//-----------GET REQUESTS FOR USERS--------
+//-----------GET REQUEST FOR USERS--------
 
 describe('"GET request on /api/users', () => {
   test("return an array of all user objects.", () => {

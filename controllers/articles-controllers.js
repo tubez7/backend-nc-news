@@ -1,7 +1,20 @@
 const {
   fetchArticleById,
   updateArticleById,
+  fetchArticles,
 } = require("../models/articles-models.js");
+
+exports.getArticles = (req, res, next) => {
+  fetchArticles()
+    .then((articles) => {
+      console.log(articles); //should be an array received from the model
+      res.status(200).send({ articles });
+    })
+    .catch((err) => {
+      console.log(err, "catch block controller")
+      next(err);
+    });
+};
 
 exports.getArticleById = (req, res, next) => {
   // console.log(req); //obj with a params key

@@ -1,5 +1,11 @@
 const db = require("../db/connection.js");
 
+
+exports.fetchArticles = () => {
+  console.log("inside fetchArticles model")
+}
+
+
 exports.fetchArticleById = (articleId) => {
   return db
     .query(`SELECT * FROM articles WHERE article_id = $1;`, [articleId])
