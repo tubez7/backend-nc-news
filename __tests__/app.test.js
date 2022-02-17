@@ -15,7 +15,6 @@ describe("Generic invalid endpoint error", () => {
       .get("/Not-An-API")
       .expect(404)
       .then((res) => {
-        console.log(res, "error res");
         expect(res.body.msg).toBe("path not found");
       });
   });
@@ -31,8 +30,8 @@ describe("GET request on /api/topics", () => {
       .then((res) => {
         expect(res.body.topics).toBeInstanceOf(Array);
         expect(res.body.topics).toHaveLength(3);
-        console.log(res.body, "res body"); //obj with key of topics
-        console.log(res.body.topics); //array of objects
+        //res.body = obj with key of topics
+        //res.body.topics = array of objects
         res.body.topics.forEach((topic) => {
           expect(topic).toEqual(
             expect.objectContaining({
@@ -47,29 +46,30 @@ describe("GET request on /api/topics", () => {
 
 //---------GET REQUESTS ON ARTICLES
 
-// describe.only("GET request on /api/articles", () => {
-//   test("should respond with status 200 and an array of all article objects on a key of articles", () => {
-//     return request(app)
-//       .get("/api/articles")
-//       .expect(200)
-//       .then(({ body }) => {
-//         expect(body.articles).toBeInstanceOf(Array);
-//         expect(body.articles).toHaveLength(12);
-//         body.articles.forEach((article) => {
-//           expect(article).toEqual(
-//             expect.objectContaining({
-//               author: expect.any(String),
-//               title: expect.any(String),
-//               article_id: expect.any(Number),
-//               topic: expect.any(String),
-//               created_at: expect.any(String),
-//               votes: expect.any(Number),
-//             })
-//           );
-//         });
-//       });
-//   });
-// });
+describe("GET request on /api/articles", () => {
+  test("should respond with status 200 and an array of all article objects on a key of articles", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeInstanceOf(Array);
+        expect(body.articles).toHaveLength(12);
+        expect(body.articles).toBeSortedBy("created_at", { coerce: true });
+        body.articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+            })
+          );
+        });
+      });
+  });
+});
 
 describe("GET request on /api/articles/:article_id", () => {
   test("should respond with status 200 and a single article object on a key of article", () => {
@@ -103,7 +103,6 @@ describe("ERROR handling GET request on /api/articles/:article_id", () => {
       .get(`/api/articles/${articleId}`)
       .expect(400)
       .then((res) => {
-        console.log(res, "400 INSIDE TEST SUITE");
         expect(res.body.msg).toBe("bad request");
       });
   });
@@ -113,7 +112,6 @@ describe("ERROR handling GET request on /api/articles/:article_id", () => {
       .get(`/api/articles/${articleId}`)
       .expect(404)
       .then(({ body }) => {
-        console.log(body, "404 INSIDE TEST SUITE");
         expect(body.msg).toBe(`article ${articleId} not found`);
       });
   });
@@ -130,7 +128,6 @@ describe("PATCH request on /api/articles/:article_id", () => {
       .send(vote)
       .expect(200)
       .then((res) => {
-        console.log(res.body.article, "response body in test suite");
         expect(res.body.article).toBeInstanceOf(Object);
         expect(res.body.article).toEqual(
           expect.objectContaining({
@@ -236,7 +233,6 @@ describe('"GET request on /api/users', () => {
       .get(`/api/users`)
       .expect(200)
       .then(({ body }) => {
-        console.log(body.users, "this is the response in tests");
         expect(body.users).toBeInstanceOf(Array);
         expect(body.users).toHaveLength(4);
         body.users.forEach((user) => {
