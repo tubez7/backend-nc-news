@@ -55,15 +55,17 @@ describe("GET request on /api/articles/:article_id", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.article).toBeInstanceOf(Object);
-        expect(body.article).toEqual({
-          author: "butter_bridge",
-          title: "Living in the shadow of a great man",
-          article_id: 1,
-          body: "I find this existence challenging",
-          topic: "mitch",
-          created_at: "2020-07-09T20:11:00.000Z",
-          votes: 100,
-        });
+        expect(body.article).toEqual(
+          expect.objectContaining({
+            author: "butter_bridge",
+            title: "Living in the shadow of a great man",
+            article_id: 1,
+            body: "I find this existence challenging",
+            topic: "mitch",
+            created_at: expect.any(String),
+            votes: 100,
+          })
+        );
       });
   });
 });
@@ -102,19 +104,21 @@ describe("PATCH request on /api/articles/:article_id", () => {
     return request(app)
       .patch(`/api/articles/${articleId}`)
       .send(vote)
-      .expect(201)
+      .expect(200)
       .then((res) => {
         console.log(res.body.article, "response body in test suite");
         expect(res.body.article).toBeInstanceOf(Object);
-        expect(res.body.article).toEqual({
-          author: "butter_bridge",
-          title: "Living in the shadow of a great man",
-          article_id: 1,
-          body: "I find this existence challenging",
-          topic: "mitch",
-          created_at: "2020-07-09T20:11:00.000Z",
-          votes: 101,
-        });
+        expect(res.body.article).toEqual(
+          expect.objectContaining({
+            author: "butter_bridge",
+            title: "Living in the shadow of a great man",
+            article_id: 1,
+            body: "I find this existence challenging",
+            topic: "mitch",
+            created_at: expect.any(String),
+            votes: 101,
+          })
+        );
       });
   });
   test("should respond the same with a minus vote patch request", () => {
@@ -123,18 +127,20 @@ describe("PATCH request on /api/articles/:article_id", () => {
     return request(app)
       .patch(`/api/articles/${articleId}`)
       .send(vote)
-      .expect(201)
+      .expect(200)
       .then(({ body }) => {
         expect(body.article).toBeInstanceOf(Object);
-        expect(body.article).toEqual({
-          author: "butter_bridge",
-          title: "Living in the shadow of a great man",
-          article_id: 1,
-          body: "I find this existence challenging",
-          topic: "mitch",
-          created_at: "2020-07-09T20:11:00.000Z",
-          votes: 0,
-        });
+        expect(body.article).toEqual(
+          expect.objectContaining({
+            author: "butter_bridge",
+            title: "Living in the shadow of a great man",
+            article_id: 1,
+            body: "I find this existence challenging",
+            topic: "mitch",
+            created_at: expect.any(String),
+            votes: 0,
+          })
+        );
       });
   });
 });

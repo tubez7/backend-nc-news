@@ -24,7 +24,7 @@ exports.patchArticleById = (req, res, next) => {
   updateArticleById(articleId, vote)
     .then((article) => {
       console.log(article, "inside then block of controller");
-      res.status(201).send({ article });
+      res.status(200).send({ article });
     })
     .catch((err) => {
       console.log(err, "catch block of controller");
