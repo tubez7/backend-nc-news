@@ -1,5 +1,16 @@
 const db = require("../db/connection.js");
 
+exports.fetchArticles = () => {
+  return db
+    .query(
+      `SELECT author, title, article_id, topic, created_at, votes FROM articles
+  ORDER BY created_at ASC;`
+    )
+    .then((articles) => {
+      return articles.rows; //array of all articles on db
+    });
+};
+
 exports.fetchArticleById = (articleId) => {
   return db
     .query(`SELECT * FROM articles WHERE article_id = $1;`, [articleId])
@@ -27,9 +38,8 @@ exports.updateArticleById = (articleId, vote) => {
           msg: `article ${articleId} not found`,
         });
       }
-      console.log(article, "article"); //result object
-      console.log(article.rows, `article.rows`); //returned array from SQL query
-      console.log(article.rows[0]); //object at 0 index
+      // article = result object
+      // article.rows = returned array from SQL query
       return article.rows[0];
     });
 };
