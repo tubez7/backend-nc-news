@@ -7,9 +7,6 @@ const testData = require("../db/data/test-data/index");
 afterAll(() => db.end());
 beforeEach(() => seed(testData));
 
-
-
-
 //----------GENERIC SERVER ERROR
 
 describe("Generic invalid endpoint error", () => {
@@ -23,8 +20,6 @@ describe("Generic invalid endpoint error", () => {
       });
   });
 });
-
-
 
 //-------GET REQUESTS ON TOPICS
 
@@ -50,9 +45,6 @@ describe("GET request on /api/topics", () => {
   });
 });
 
-
-
-
 //---------GET REQUESTS ON ARTICLES
 
 describe("GET request on /api/articles/:article_id", () => {
@@ -76,13 +68,9 @@ describe("GET request on /api/articles/:article_id", () => {
   });
 });
 
-
-
 //--------ERRORS FOR GET REQUESTS ON ARTICLE ID
 
-
 describe("ERROR handling GET request on /api/articles/:article_id", () => {
-
   test("respond with status 400 - bad request when article_id is not a number", () => {
     const articleId = "NOT_A_NUMBER";
     return request(app)
@@ -105,13 +93,9 @@ describe("ERROR handling GET request on /api/articles/:article_id", () => {
   });
 });
 
-
-
-
 //----------PATCH REQUESTS ON ARTICLES
 
 describe("PATCH request on /api/articles/:article_id", () => {
-
   test("status: 201 - request body object should update the vote property of the article and respond with an article object on key of article", () => {
     const articleId = 1;
     const vote = { inc_votes: 1 };
@@ -155,14 +139,9 @@ describe("PATCH request on /api/articles/:article_id", () => {
   });
 });
 
-
-
-
-
 //---------PATCH REQUEST ERRORS ON ARTICLE_ID
 
 describe("ERROR handling patch request on /api/articles/:article_id", () => {
-
   test("should respond with status 400 - bad request when article_id is not a number", () => {
     const articleId = "NOT_A_NUMBER";
     const vote = { inc_votes: 1 };
@@ -215,6 +194,28 @@ describe("ERROR handling patch request on /api/articles/:article_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe(`article ${articleId} not found`);
+      });
+  });
+});
+
+//-----------GET REQUESTS FOR USERS--------
+
+describe('"GET request on /api/users', () => {
+  test("return an array of all user objects.", () => {
+    return request(app)
+      .get(`/api/users`)
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body.users, "this is the response in tests");
+        expect(body.users).toBeInstanceOf(Array);
+        expect(body.users).toHaveLength(4);
+        body.users.forEach((user) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+            })
+          );
+        });
       });
   });
 });
