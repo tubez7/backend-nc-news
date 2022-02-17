@@ -7,9 +7,6 @@ const testData = require("../db/data/test-data/index");
 afterAll(() => db.end());
 beforeEach(() => seed(testData));
 
-
-
-
 //----------GENERIC SERVER ERROR
 
 describe("Generic invalid endpoint error", () => {
@@ -23,8 +20,6 @@ describe("Generic invalid endpoint error", () => {
       });
   });
 });
-
-
 
 //-------GET REQUESTS ON TOPICS
 
@@ -50,9 +45,6 @@ describe("GET request on /api/topics", () => {
   });
 });
 
-
-
-
 //---------GET REQUESTS ON ARTICLES
 
 describe("GET request on /api/articles/:article_id", () => {
@@ -63,26 +55,24 @@ describe("GET request on /api/articles/:article_id", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.article).toBeInstanceOf(Object);
-        expect(body.article).toEqual({
-          author: "butter_bridge",
-          title: "Living in the shadow of a great man",
-          article_id: 1,
-          body: "I find this existence challenging",
-          topic: "mitch",
-          created_at: "2020-07-09T20:11:00.000Z",
-          votes: 100,
-        });
+        expect(body.article).toEqual(
+          expect.objectContaining({
+            author: "butter_bridge",
+            title: "Living in the shadow of a great man",
+            article_id: 1,
+            body: "I find this existence challenging",
+            topic: "mitch",
+            created_at: expect.any(String),
+            votes: 100,
+          })
+        );
       });
   });
 });
 
-
-
 //--------ERRORS FOR GET REQUESTS ON ARTICLE ID
 
-
 describe("ERROR handling GET request on /api/articles/:article_id", () => {
-
   test("respond with status 400 - bad request when article_id is not a number", () => {
     const articleId = "NOT_A_NUMBER";
     return request(app)
@@ -105,32 +95,30 @@ describe("ERROR handling GET request on /api/articles/:article_id", () => {
   });
 });
 
-
-
-
 //----------PATCH REQUESTS ON ARTICLES
 
 describe("PATCH request on /api/articles/:article_id", () => {
-
   test("status: 201 - request body object should update the vote property of the article and respond with an article object on key of article", () => {
     const articleId = 1;
     const vote = { inc_votes: 1 };
     return request(app)
       .patch(`/api/articles/${articleId}`)
       .send(vote)
-      .expect(201)
+      .expect(200)
       .then((res) => {
         console.log(res.body.article, "response body in test suite");
         expect(res.body.article).toBeInstanceOf(Object);
-        expect(res.body.article).toEqual({
-          author: "butter_bridge",
-          title: "Living in the shadow of a great man",
-          article_id: 1,
-          body: "I find this existence challenging",
-          topic: "mitch",
-          created_at: "2020-07-09T20:11:00.000Z",
-          votes: 101,
-        });
+        expect(res.body.article).toEqual(
+          expect.objectContaining({
+            author: "butter_bridge",
+            title: "Living in the shadow of a great man",
+            article_id: 1,
+            body: "I find this existence challenging",
+            topic: "mitch",
+            created_at: expect.any(String),
+            votes: 101,
+          })
+        );
       });
   });
   test("should respond the same with a minus vote patch request", () => {
@@ -139,30 +127,27 @@ describe("PATCH request on /api/articles/:article_id", () => {
     return request(app)
       .patch(`/api/articles/${articleId}`)
       .send(vote)
-      .expect(201)
+      .expect(200)
       .then(({ body }) => {
         expect(body.article).toBeInstanceOf(Object);
-        expect(body.article).toEqual({
-          author: "butter_bridge",
-          title: "Living in the shadow of a great man",
-          article_id: 1,
-          body: "I find this existence challenging",
-          topic: "mitch",
-          created_at: "2020-07-09T20:11:00.000Z",
-          votes: 0,
-        });
+        expect(body.article).toEqual(
+          expect.objectContaining({
+            author: "butter_bridge",
+            title: "Living in the shadow of a great man",
+            article_id: 1,
+            body: "I find this existence challenging",
+            topic: "mitch",
+            created_at: expect.any(String),
+            votes: 0,
+          })
+        );
       });
   });
 });
 
-
-
-
-
 //---------PATCH REQUEST ERRORS ON ARTICLE_ID
 
 describe("ERROR handling patch request on /api/articles/:article_id", () => {
-
   test("should respond with status 400 - bad request when article_id is not a number", () => {
     const articleId = "NOT_A_NUMBER";
     const vote = { inc_votes: 1 };
@@ -215,6 +200,28 @@ describe("ERROR handling patch request on /api/articles/:article_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe(`article ${articleId} not found`);
+      });
+  });
+});
+
+//-----------GET REQUESTS FOR USERS--------
+
+describe('"GET request on /api/users', () => {
+  test("return an array of all user objects.", () => {
+    return request(app)
+      .get(`/api/users`)
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body.users, "this is the response in tests");
+        expect(body.users).toBeInstanceOf(Array);
+        expect(body.users).toHaveLength(4);
+        body.users.forEach((user) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+            })
+          );
+        });
       });
   });
 });
