@@ -47,7 +47,7 @@ describe("GET request on /api/topics", () => {
 //---------GET REQUESTS ON ARTICLES
 
 describe("GET request on /api/articles", () => {
-  test("should respond with status 200 and an array of all article objects on a key of articles", () => {
+  test("should respond with status 200 and an array of all article objects on a key of articles sorted in date order ascending", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -93,6 +93,33 @@ describe("GET request on /api/articles/:article_id", () => {
       });
   });
 });
+
+describe("REFACTORED GET request on /api/articles/:article_id", () => {
+  test("should respond with status 200 and a single article object on a key of article including a comment_count property", () => {
+    const articleId = 1;
+    return request(app)
+      .get(`/api/articles/${articleId}`)
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body.article, "Result in test");
+        expect(body.article).toBeInstanceOf(Object);
+        expect(body.article).toEqual(
+          expect.objectContaining({
+            author: "butter_bridge",
+            title: "Living in the shadow of a great man",
+            article_id: 1,
+            body: "I find this existence challenging",
+            topic: "mitch",
+            created_at: expect.any(String),
+            votes: 100,
+            comment_count: "11",
+          })
+        );
+      });
+  });
+});
+
+
 
 //--------ERRORS FOR GET REQUESTS ON ARTICLE ID
 
