@@ -47,7 +47,7 @@ describe("GET request on /api/topics", () => {
 //---------GET REQUESTS ON ARTICLES
 
 describe("GET request on /api/articles", () => {
-  test("should respond with status 200 and an array of all article objects on a key of articles", () => {
+  test("should respond with status 200 and an array of all article objects on a key of articles sorted in date order ascending", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -88,6 +88,22 @@ describe("GET request on /api/articles/:article_id", () => {
             topic: "mitch",
             created_at: expect.any(String),
             votes: 100,
+          })
+        );
+      });
+  });
+});
+
+describe("REFACTORED GET request on /api/articles/:article_id", () => {
+  test("should respond with status 200 and a single article object on a key of article including a comment_count property", () => {
+    const articleId = 7;
+    return request(app)
+      .get(`/api/articles/${articleId}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual(
+          expect.objectContaining({
+            comment_count: 0,
           })
         );
       });
