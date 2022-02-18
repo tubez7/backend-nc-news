@@ -13,13 +13,16 @@ exports.fetchArticles = () => {
 
 exports.fetchArticleById = (articleId) => {
   return db
-    .query(`SELECT articles.author, articles.title, articles.article_id, articles.body, articles.topic, articles.created_at, articles.votes, COUNT(articles.article_id) AS comment_count FROM articles 
-    JOIN comments
+    .query(
+      `SELECT articles.*, CAST(COUNT(comments.article_id) AS INT) AS comment_count
+    FROM articles
+    LEFT JOIN comments
     ON articles.article_id = comments.article_id
     WHERE articles.article_id = $1
-    GROUP BY articles.article_id;`, [articleId])
+    GROUP BY articles.article_id;`,
+      [articleId]
+    )
     .then((article) => {
-      console.log(article.rows[0], "response in model")
       if (article.rows.length === 0) {
         return Promise.reject({
           status: 404,
@@ -29,12 +32,6 @@ exports.fetchArticleById = (articleId) => {
       return article.rows[0];
     });
 };
-
-
-
-
-
-
 
 exports.updateArticleById = (articleId, vote) => {
   return db
