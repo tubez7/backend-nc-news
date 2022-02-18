@@ -243,7 +243,7 @@ describe("ERROR handling patch request on /api/articles/:article_id", () => {
 
 //-----------GET REQUEST FOR USERS--------
 
-describe('"GET request on /api/users', () => {
+describe("GET request on /api/users", () => {
   test("return an array of all user objects.", () => {
     return request(app)
       .get(`/api/users`)
@@ -261,3 +261,26 @@ describe('"GET request on /api/users', () => {
       });
   });
 });
+
+//---------------POST REQUEST ON ARTICLE_ID COMMENTS
+
+// describe("POST /api/articles/:article_id/comments", () => {
+//   test("should add comment to the db. Responds with status: 201 and the posted comment on a key of comment", () => {
+//     const articleId = 1;
+//     const comment = { username: "test_user", body: "test_body" };
+//     return request(app)
+//       .post(`/api/articles/${articleId}/comments`)
+//       .send(comment)
+//       .expect(201)
+//       .then(({ body }) => {
+//         expect(body.comment).toBeInstanceOf(Object);
+//         expect(body.comment).toEqual(
+//           expect.objectContaining({
+//             comment: "test_body",
+//           })
+//         );
+//       });
+//   });
+// });
+
+

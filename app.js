@@ -28,6 +28,8 @@ app.get(`/api/users`, getUsers);
 
 app.patch(`/api/articles/:article_id`, patchArticleById);
 
+// app.post(`/api/articles/:article_id/comments`, post)
+
 //------GENERIC ENDPOINT ERROR CATCH-------------------
 
 app.all("/*", (req, res) => {
