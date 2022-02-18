@@ -11,6 +11,9 @@ exports.handlePsqlErrors = (err, req, res, next) => {
   if (err.code === "22P02" || err.code === "23502") {
     console.log(err, "INSIDE 400 BAD REQUEST - error handler");
     res.status(400).send({ msg: "bad request" });
+  } else if (err.constraint === 'comments_author_fkey') {
+    console.log(err, "INSIDE 400 BAD REQUEST - INVALID USERNAME");
+    res.status(400).send({ msg: "bad request - INVALID USERNAME" });
   } else {
     next(err);
   }
@@ -20,3 +23,5 @@ exports.handleServerErrors = (err, req, res, next) => {
   console.log(err, "SERVER 500 ERROR BLOCK");
   res.status(500).send({ msg: "internal server error" });
 };
+
+
