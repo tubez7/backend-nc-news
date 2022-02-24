@@ -4,9 +4,8 @@ exports.postCommentById = (req, res, next) => {
   //   console.log(req, "whole request object");
 
   const { article_id: articleId } = req.params; //article_id on params
-  const { username } = req.body; //username on body
-  const { body: commentBody } = req.body; // body on body
-
+  const { username, body: commentBody } = req.body; //destructure username & destructure + rename body on req.body 
+  
   insertCommentById(commentBody, articleId, username)
     .then((comment) => {
       res.status(201).send({ comment });
