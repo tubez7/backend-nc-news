@@ -313,7 +313,7 @@ describe("Errors on POST /api/articles/:article_id/comments", () => {
         expect(res.body.msg).toBe("bad request");
       });
   });
-  test("should respond with 400 bad request - INVALID USERNAME when article_id is not a number", () => {
+  test("should respond with 400 bad request - INVALID USERNAME when username does not exist on database", () => {
     const articleId = 1;
     const comment = { username: "INVALID_ID", body: "test_body" };
     return request(app)
