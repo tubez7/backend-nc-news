@@ -319,7 +319,7 @@ describe("Errors on POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post(`/api/articles/${articleId}/comments`)
       .send(comment)
-      .expect(400)
+      .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("bad request - INVALID USERNAME");
       });
