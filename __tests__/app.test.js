@@ -324,7 +324,7 @@ describe("Errors on POST /api/articles/:article_id/comments", () => {
         expect(res.body.msg).toBe("bad request - INVALID USERNAME");
       });
   });
-  test("should respond with status 404 - article not found for valid but non-existent article_id", () => {
+  test.only("should respond with status 404 - article not found for valid but non-existent article_id", () => {
     const articleId = 9999;
     const comment = { username: "rogersop", body: "test_body" };
     return request(app)
@@ -332,9 +332,10 @@ describe("Errors on POST /api/articles/:article_id/comments", () => {
       .send(comment)
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toBe(`article ${articleId} not found`);
+        expect(res.body.msg).toBe("test");
       });
   });
 });
 
 
+// `article ${articleId} not found`
