@@ -51,3 +51,5 @@ exports.updateArticleById = (articleId, vote) => {
       return article.rows[0];
     });
 };
+
+

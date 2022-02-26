@@ -8,9 +8,15 @@ const {
 
 const { getTopics } = require("./controllers/topics-controllers.js");
 
-const { getArticleById, patchArticleById, getArticles } = require("./controllers/articles-controllers.js");
+const {
+  getArticleById,
+  patchArticleById,
+  getArticles,
+} = require("./controllers/articles-controllers.js");
 
 const { getUsers } = require("./controllers/users-controllers");
+
+const { postCommentById } = require("./controllers/comments-controllers");
 
 //----APP-------------------------
 
@@ -27,6 +33,8 @@ app.get(`/api/articles/:article_id`, getArticleById);
 app.get(`/api/users`, getUsers);
 
 app.patch(`/api/articles/:article_id`, patchArticleById);
+
+app.post(`/api/articles/:article_id/comments`, postCommentById);
 
 //------GENERIC ENDPOINT ERROR CATCH-------------------
 

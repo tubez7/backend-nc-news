@@ -243,7 +243,7 @@ describe("ERROR handling patch request on /api/articles/:article_id", () => {
 
 //-----------GET REQUEST FOR USERS--------
 
-describe('"GET request on /api/users', () => {
+describe("GET request on /api/users", () => {
   test("return an array of all user objects.", () => {
     return request(app)
       .get(`/api/users`)
@@ -261,3 +261,81 @@ describe('"GET request on /api/users', () => {
       });
   });
 });
+
+// ---------------POST REQUEST ON ARTICLE_ID COMMENTS
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("should add comment to the db. Responds with status: 201 and the posted comment on a key of comment", () => {
+    const articleId = 1;
+    const comment = { username: "rogersop", body: "test_body" };
+    return request(app)
+      .post(`/api/articles/${articleId}/comments`)
+      .send(comment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toBeInstanceOf(Object);
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            comment_id: 19,
+            body: "test_body",
+            article_id: 1,
+            author: "rogersop",
+            votes: 0,
+            created_at: expect.any(String),
+          })
+        );
+      });
+  });
+});
+
+//---------ERRORS FOR POST REQUEST ON COMMENTS
+
+describe("Errors on POST /api/articles/:article_id/comments", () => {
+  test("should respond with 400 bad request when article_id is not a number", () => {
+    const articleId = "NOT_A_NUMBER";
+    const comment = { username: "rogersop", body: "test_body" };
+    return request(app)
+      .post(`/api/articles/${articleId}/comments`)
+      .send(comment)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("bad request");
+      });
+  });
+  test("should respond with 400 bad request when request body is incorrectly formatted ", () => {
+    const articleId = 1;
+    const comment = { username: "rogersop", incorrect_key: "test_body" };
+    return request(app)
+      .post(`/api/articles/${articleId}/comments`)
+      .send(comment)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("bad request");
+      });
+  });
+  test("should respond with 400 bad request - INVALID USERNAME when username does not exist on database", () => {
+    const articleId = 1;
+    const comment = { username: "INVALID_ID", body: "test_body" };
+    return request(app)
+      .post(`/api/articles/${articleId}/comments`)
+      .send(comment)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("bad request - INVALID USERNAME");
+      });
+  });
+  test.only("should respond with status 404 - article not found for valid but non-existent article_id", () => {
+    const articleId = 9999;
+    const comment = { username: "rogersop", body: "test_body" };
+    return request(app)
+      .post(`/api/articles/${articleId}/comments`)
+      .send(comment)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("test");
+      });
+  });
+});
+
+
+// `article ${articleId} not found`
