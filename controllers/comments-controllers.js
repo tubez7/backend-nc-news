@@ -1,8 +1,21 @@
-const { insertCommentById } = require("../models/comments-models");
+const {
+  insertCommentById,
+  fetchCommentsByArticleId,
+} = require("../models/comments-models");
+
+exports.getCommentsByArticleId = (req, res, next) => {
+  const { article_id: articleId } = req.params;
+  fetchCommentsByArticleId(articleId)
+  .then((comments) => {
+    res.status(200).send({ comments });
+  })
+  .catch((err) => {
+    next(err);
+  });
+};
+  
 
 exports.postCommentById = (req, res, next) => {
-  //   console.log(req, "whole request object");
-
   const { article_id: articleId } = req.params; //article_id on params
   const { username, body: commentBody } = req.body; //destructure username & destructure + rename body on req.body
 
@@ -20,4 +33,3 @@ exports.postCommentById = (req, res, next) => {
 // } else {
 //   next(err);
 // }
-

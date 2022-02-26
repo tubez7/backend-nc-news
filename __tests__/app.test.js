@@ -319,12 +319,12 @@ describe("Errors on POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post(`/api/articles/${articleId}/comments`)
       .send(comment)
-      .expect(404)
+      .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("bad request - INVALID USERNAME");
       });
   });
-  test.only("should respond with status 404 - article not found for valid but non-existent article_id", () => {
+  test("should respond with status 404 - article not found for valid but non-existent article_id", () => {
     const articleId = 9999;
     const comment = { username: "rogersop", body: "test_body" };
     return request(app)
@@ -337,5 +337,31 @@ describe("Errors on POST /api/articles/:article_id/comments", () => {
   });
 });
 
-
 // `article ${articleId} not found`
+
+//  GET REQUEST FOR COMMENTS BY ARTICLE ID
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("should respond with status 200 and an array of all comments for the requested article", () => {
+    const articleId = 1;
+    return request(app)
+      .get(`/api/articles/${articleId}/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toBeInstanceOf(Array);
+        expect(body.comments).toHaveLength(11);
+        body.comments.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+});
+
