@@ -332,7 +332,7 @@ describe("Errors on POST /api/articles/:article_id/comments", () => {
       .send(comment)
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toBe("test");
+        expect(res.body.msg).toBe("article not found");
       });
   });
 });
@@ -363,5 +363,38 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
       });
   });
+  test("should respond with status 200 and an empty array when article has no comments", () => {
+    const articleId = 2;
+    return request(app)
+      .get(`/api/articles/${articleId}/comments`)
+      .expect(200)
+      .then((res) => {
+        expect(res.body.comments).toBeInstanceOf(Array);
+        expect(res.body.comments).toHaveLength(0);
+        expect(res.body.comments).toEqual([]);
+      });
+  });
 });
 
+//----ERRORS FOR GET COMMENTS BY ARTICLE ID
+
+describe("ERROR handling GET request on /api/articles/:article_id/comments", () => {
+  test("should respond with status 400 - bad request when article_id is not a number", () => {
+    const articleId = "NOT_A_NUMBER";
+    return request(app)
+      .get(`/api/articles/${articleId}/comments`)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("bad request");
+      });
+  });
+  test("should respond with status 404 - not found when article_id is a number that does not exist on database", () => {
+    const articleId = 9999;
+    return request(app)
+      .get(`/api/articles/${articleId}/comments`)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe(`article ${articleId} not found`);
+      });
+  });
+});

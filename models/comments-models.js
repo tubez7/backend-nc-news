@@ -4,6 +4,7 @@ exports.fetchCommentsByArticleId = (articleId) => {
   return db
     .query(`SELECT * FROM comments WHERE article_id = $1;`, [articleId])
     .then((res) => {
+     
       return res.rows; //res.rows is the array of comments
     });
 };
