@@ -52,4 +52,15 @@ exports.updateArticleById = (articleId, vote) => {
     });
 };
 
-
+exports.checkArticleExists = (articleId) => {
+  return db
+    .query(`SELECT * FROM articles where article_id = $1`, [articleId])
+    .then((article) => {
+      if (article.rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `article ${articleId} not found`,
+        });
+      }
+    });
+};
