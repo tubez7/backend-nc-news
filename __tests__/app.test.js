@@ -332,12 +332,11 @@ describe("Errors on POST /api/articles/:article_id/comments", () => {
       .send(comment)
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toBe("article not found");
+        expect(res.body.msg).toBe(`article ${articleId} not found`);
       });
   });
 });
 
-// `article ${articleId} not found`
 
 //  GET REQUEST FOR COMMENTS BY ARTICLE ID
 

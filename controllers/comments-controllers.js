@@ -21,6 +21,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
 };
 
 exports.postCommentById = (req, res, next) => {
+  console.log(req, "in controller")
   const { article_id: articleId } = req.params; //article_id on params
   const { username, body: commentBody } = req.body; //destructure username & destructure + rename body on req.body
 

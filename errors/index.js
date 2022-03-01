@@ -18,15 +18,18 @@ exports.handlePsqlErrors = (err, req, res, next) => {
     res.status(400).send({ msg: "bad request - INVALID USERNAME" });
   } else if (err.constraint === "comments_article_id_fkey") {
     console.log(err, "INSIDE 404 NOT FOUND - ARTICLE NOT FOUND");
-    res.status(404).send({ msg: "article not found" });
+    const articleId = parseInt(req.originalUrl.match(/\d+/));
+    res.status(404).send({ msg: `article ${articleId} not found` });
   } else {
     next(err);
   }
 };
-
+    
 exports.handleServerErrors = (err, req, res, next) => {
   console.log(err, "SERVER 500 ERROR BLOCK");
   res.status(500).send({ msg: "internal server error" });
 };
+    
 
-// `article ${articleId} not found`
+
+
