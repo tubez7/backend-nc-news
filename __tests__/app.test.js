@@ -71,6 +71,23 @@ describe("GET request on /api/articles", () => {
   });
 });
 
+describe("REFACTORED GET request on /api/articles", () => {
+  test("should respond with status 200 and an array of all article objects, including a comment_count property, on a key of articles", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        body.articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              comment_count: expect.any(Number),
+            })
+          );
+        });
+      });
+  });
+});
+
 describe("GET request on /api/articles/:article_id", () => {
   test("should respond with status 200 and a single article object on a key of article", () => {
     const articleId = 1;
@@ -332,12 +349,10 @@ describe("Errors on POST /api/articles/:article_id/comments", () => {
       .send(comment)
       .expect(404)
       .then((res) => {
-        expect(res.body.msg).toBe("article not found");
+        expect(res.body.msg).toBe(`article ${articleId} not found`);
       });
   });
 });
-
-// `article ${articleId} not found`
 
 //  GET REQUEST FOR COMMENTS BY ARTICLE ID
 

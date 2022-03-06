@@ -33,8 +33,3 @@ exports.postCommentById = (req, res, next) => {
     });
 };
 
-// if (err.constraint === "comments_article_id_fkey") {
-//   res.status(404).send({ msg: `article ${articleId} not found` });
-// } else {
-//   next(err);
-// }

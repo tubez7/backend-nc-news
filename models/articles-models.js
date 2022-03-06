@@ -3,8 +3,12 @@ const db = require("../db/connection.js");
 exports.fetchArticles = () => {
   return db
     .query(
-      `SELECT author, title, article_id, topic, created_at, votes FROM articles
-  ORDER BY created_at ASC;`
+      `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, CAST(COUNT(comments.article_id) AS INT) AS comment_count 
+      FROM articles
+      FULL JOIN comments 
+      ON articles.article_id = comments.article_id 
+      GROUP BY articles.article_id
+      ORDER BY created_at ASC;`
     )
     .then((articles) => {
       return articles.rows; //array of all articles on db
