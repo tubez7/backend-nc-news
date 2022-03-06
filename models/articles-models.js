@@ -1,18 +1,56 @@
 const db = require("../db/connection.js");
 
-exports.fetchArticles = () => {
-  return db
-    .query(
-      `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, CAST(COUNT(comments.article_id) AS INT) AS comment_count 
-      FROM articles
-      FULL JOIN comments 
-      ON articles.article_id = comments.article_id 
-      GROUP BY articles.article_id
-      ORDER BY created_at ASC;`
-    )
-    .then((articles) => {
-      return articles.rows; //array of all articles on db
-    });
+exports.fetchArticles = (sortBy, order, topic) => {
+  console.log(sortBy, order, topic, "topic in model");
+  const queryValues = [];
+
+  let queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, CAST(COUNT(comments.article_id) AS INT) AS comment_count 
+  FROM articles
+  FULL JOIN comments 
+  ON articles.article_id = comments.article_id`;
+
+  if (topic) {
+    queryStr += ` WHERE articles.topic = $1`;
+    queryValues.push(topic);
+    }
+
+  if (sortBy && !order) {
+    return db
+      .query(
+        queryStr + ` GROUP BY articles.article_id ORDER BY ${sortBy} DESC;`,
+        queryValues
+      )
+      .then((articles) => {
+        return articles.rows; 
+      });
+  } else if (!sortBy && order) {
+    return db
+      .query(
+        queryStr + ` GROUP BY articles.article_id ORDER BY created_at ${order}`,
+        queryValues
+      )
+      .then((articles) => {
+        return articles.rows;
+      });
+  } else if (sortBy && order) {
+    return db
+      .query(
+        queryStr + ` GROUP BY articles.article_id ORDER BY ${sortBy} ${order};`,
+        queryValues
+      )
+      .then((articles) => {
+        return articles.rows;
+      });
+  } else {
+    return db
+      .query(
+        queryStr + ` GROUP BY articles.article_id ORDER BY created_at DESC;`,
+        queryValues
+      )
+      .then((articles) => {
+        return articles.rows; //array of all articles on db
+      });
+  }
 };
 
 exports.fetchArticleById = (articleId) => {
@@ -68,3 +106,10 @@ exports.checkArticleExists = (articleId) => {
       }
     });
 };
+
+`SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, CAST(COUNT(comments.article_id) AS INT) AS comment_count 
+  FROM articles
+  FULL JOIN comments 
+  ON articles.article_id = comments.article_id 
+  GROUP BY articles.article_id
+  ORDER BY created_at DESC;`;

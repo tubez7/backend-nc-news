@@ -47,14 +47,15 @@ describe("GET request on /api/topics", () => {
 //---------GET REQUESTS ON ARTICLES
 
 describe("GET request on /api/articles", () => {
-  test("should respond with status 200 and an array of all article objects on a key of articles sorted in date order ascending", () => {
+  test("should respond with status 200 and an array of all article objects on a key of articles sorted in date order descending", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toBeInstanceOf(Array);
         expect(body.articles).toHaveLength(12);
-        expect(body.articles).toBeSortedBy("created_at", { coerce: true });
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+
         body.articles.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({
@@ -87,6 +88,90 @@ describe("REFACTORED GET request on /api/articles", () => {
       });
   });
 });
+
+describe("QUERIES ON GET request for /api/articles", () => {
+  test("should accept a sort by query which sorts the articles by any valid column - defaults to date", () => {
+    const sortBy = { sort_by: "title" };
+    return request(app)
+      .get("/api/articles")
+      .query(sortBy)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("title", { descending: true });
+      });
+  });
+  test("sort test with different sort field", () => {
+    const sortBy = { sort_by: "comment_count" };
+    return request(app)
+      .get("/api/articles")
+      .query(sortBy)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("comment_count", {
+          descending: true,
+        });
+      });
+  });
+  test("will sort in ascending order when provided in request query", () => {
+    const order = { order: "asc" };
+    return request(app)
+      .get("/api/articles")
+      .query(order)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at");
+      });
+  });
+  test("will sort in ascending order when provided in request query with a sort by query", () => {
+    const query = { sort_by: "comment_count", order: "asc" };
+    return request(app)
+      .get("/api/articles")
+      .query(query)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("comment_count");
+      });
+  });
+  test("will filter the articles by topic when present in the request query", () => {
+    const topic = { topic: "mitch" };
+    return request(app)
+      .get("/api/articles")
+      .query(topic)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
+        expect(body.articles).toHaveLength(11);
+        body.articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              topic: "mitch",
+            })
+          );
+        });
+      });
+  });
+  test("will return the correct query result with multiple query fields", () => {
+    const query = { topic: "mitch", sort_by: "author", order: "asc" };
+    return request(app)
+      .get("/api/articles")
+      .query(query)
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body.articles, "in test block");
+        expect(body.articles).toBeSortedBy("author");
+        expect(body.articles).toHaveLength(11);
+        body.articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              topic: "mitch",
+            })
+          );
+        });
+      });
+  });
+});
+
+
 
 describe("GET request on /api/articles/:article_id", () => {
   test("should respond with status 200 and a single article object on a key of article", () => {
@@ -126,6 +211,9 @@ describe("REFACTORED GET request on /api/articles/:article_id", () => {
       });
   });
 });
+
+//--------ERRORS FOR GET REQUESTS ON ARTICLES + QUERIES
+
 
 //--------ERRORS FOR GET REQUESTS ON ARTICLE ID
 
