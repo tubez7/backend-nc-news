@@ -1,6 +1,6 @@
 const db = require("../db/connection.js");
 
-exports.fetchArticles = (sortBy, order, topic) => {
+exports.fetchArticles = (sortBy = "created_at", order = "DESC", topic) => {
   console.log(sortBy, order, topic, "topic in model");
   const queryValues = [];
 
@@ -12,45 +12,15 @@ exports.fetchArticles = (sortBy, order, topic) => {
   if (topic) {
     queryStr += ` WHERE articles.topic = $1`;
     queryValues.push(topic);
-    }
-
-  if (sortBy && !order) {
-    return db
-      .query(
-        queryStr + ` GROUP BY articles.article_id ORDER BY ${sortBy} DESC;`,
-        queryValues
-      )
-      .then((articles) => {
-        return articles.rows; 
-      });
-  } else if (!sortBy && order) {
-    return db
-      .query(
-        queryStr + ` GROUP BY articles.article_id ORDER BY created_at ${order}`,
-        queryValues
-      )
-      .then((articles) => {
-        return articles.rows;
-      });
-  } else if (sortBy && order) {
-    return db
-      .query(
-        queryStr + ` GROUP BY articles.article_id ORDER BY ${sortBy} ${order};`,
-        queryValues
-      )
-      .then((articles) => {
-        return articles.rows;
-      });
-  } else {
-    return db
-      .query(
-        queryStr + ` GROUP BY articles.article_id ORDER BY created_at DESC;`,
-        queryValues
-      )
-      .then((articles) => {
-        return articles.rows; //array of all articles on db
-      });
   }
+  return db
+    .query(
+      queryStr + ` GROUP BY articles.article_id ORDER BY ${sortBy} ${order};`,
+      queryValues
+    )
+    .then((articles) => {
+      return articles.rows; //array of all articles on db
+    });
 };
 
 exports.fetchArticleById = (articleId) => {

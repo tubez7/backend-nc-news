@@ -44,7 +44,7 @@ describe("GET request on /api/topics", () => {
   });
 });
 
-//---------GET REQUESTS ON ARTICLES
+//---------GET REQUEST ON ARTICLES
 
 describe("GET request on /api/articles", () => {
   test("should respond with status 200 and an array of all article objects on a key of articles sorted in date order descending", () => {
@@ -169,9 +169,40 @@ describe("QUERIES ON GET request for /api/articles", () => {
         });
       });
   });
+  test("will return the correct query result with multiple query fields", () => {
+    const query = { topic: "paper", sort_by: "author", order: "asc" };
+    return request(app)
+      .get("/api/articles")
+      .query(query)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(0);
+      });
+  });
 });
 
+//--------ERRORS FOR GET REQUESTS ON ARTICLES + QUERIES
 
+// describe("ERROR handling GET request on /api/articles", () => {
+//   test("should respond with status 400 - bad request when request body incorrectly formatted", () => {
+//     const query = { INCORRECT_KEY: "author"};
+//     return request(app)
+//       .get(`/api/articles`)
+//       .query(query)
+//       .expect(400)
+//       .then((res) => {
+//         console.log(res.body, "inside test block")
+//         expect(res.body.msg).toBe("bad request - invalid query format");
+//       });
+//   });
+// });
+
+
+
+
+
+
+//---------GET REQUEST ON ARTICLES BY ARTICLE ID
 
 describe("GET request on /api/articles/:article_id", () => {
   test("should respond with status 200 and a single article object on a key of article", () => {
@@ -211,9 +242,6 @@ describe("REFACTORED GET request on /api/articles/:article_id", () => {
       });
   });
 });
-
-//--------ERRORS FOR GET REQUESTS ON ARTICLES + QUERIES
-
 
 //--------ERRORS FOR GET REQUESTS ON ARTICLE ID
 
