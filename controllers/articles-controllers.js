@@ -5,7 +5,8 @@ const {
 } = require("../models/articles-models.js");
 
 exports.getArticles = (req, res, next) => {
-  fetchArticles()
+  const { sort_by: sortBy, order, topic } = req.query;
+  fetchArticles(sortBy, order, topic)
     .then((articles) => {
       // articles = should be an array received from the model
       res.status(200).send({ articles });
@@ -39,5 +40,3 @@ exports.patchArticleById = (req, res, next) => {
       next(err);
     });
 };
-
-

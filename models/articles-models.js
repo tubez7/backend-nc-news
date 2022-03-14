@@ -1,14 +1,36 @@
 const db = require("../db/connection.js");
 
-exports.fetchArticles = () => {
+exports.fetchArticles = (sortBy = "created_at", order = "DESC", topic) => {
+  
+  const queryValues = [];
+
+  if (!["title", "topic", "author", "body", "created_at", "votes", "comment_count"].includes(sortBy)) {
+    return Promise.reject({
+      status: 400,
+      msg: "bad request - INVALID SORT QUERY",
+    });
+  }
+
+  if (!["asc", "desc", "ASC", "DESC"].includes(order)) {
+    return Promise.reject({
+      status: 400,
+      msg: "bad request - INVALID ORDER QUERY",
+    });
+  }
+
+  let queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, CAST(COUNT(comments.article_id) AS INT) AS comment_count 
+  FROM articles
+  FULL JOIN comments 
+  ON articles.article_id = comments.article_id`;
+
+  if (topic) {
+    queryStr += ` WHERE articles.topic = $1`;
+    queryValues.push(topic);
+  }
   return db
     .query(
-      `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, CAST(COUNT(comments.article_id) AS INT) AS comment_count 
-      FROM articles
-      FULL JOIN comments 
-      ON articles.article_id = comments.article_id 
-      GROUP BY articles.article_id
-      ORDER BY created_at ASC;`
+      queryStr + ` GROUP BY articles.article_id ORDER BY ${sortBy} ${order};`,
+      queryValues
     )
     .then((articles) => {
       return articles.rows; //array of all articles on db
@@ -68,3 +90,10 @@ exports.checkArticleExists = (articleId) => {
       }
     });
 };
+
+`SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, CAST(COUNT(comments.article_id) AS INT) AS comment_count 
+  FROM articles
+  FULL JOIN comments 
+  ON articles.article_id = comments.article_id 
+  GROUP BY articles.article_id
+  ORDER BY created_at DESC;`;
