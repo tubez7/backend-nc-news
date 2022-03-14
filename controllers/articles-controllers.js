@@ -5,22 +5,16 @@ const {
 } = require("../models/articles-models.js");
 
 exports.getArticles = (req, res, next) => {
-  console.log(req.query, "GET req query inside controller");
-
   const { sort_by: sortBy, order, topic } = req.query;
   fetchArticles(sortBy, order, topic)
     .then((articles) => {
-      
       // articles = should be an array received from the model
       res.status(200).send({ articles });
     })
     .catch((err) => {
-      console.log(err, "inside controller catch");
       next(err);
     });
 };
-
-
 
 exports.getArticleById = (req, res, next) => {
   // req = obj with a params key

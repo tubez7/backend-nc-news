@@ -1,8 +1,22 @@
 const db = require("../db/connection.js");
 
 exports.fetchArticles = (sortBy = "created_at", order = "DESC", topic) => {
-  console.log(sortBy, order, topic, "topic in model");
+  
   const queryValues = [];
+
+  if (!["title", "topic", "author", "body", "created_at", "votes", "comment_count"].includes(sortBy)) {
+    return Promise.reject({
+      status: 400,
+      msg: "bad request - INVALID SORT QUERY",
+    });
+  }
+
+  if (!["asc", "desc", "ASC", "DESC"].includes(order)) {
+    return Promise.reject({
+      status: 400,
+      msg: "bad request - INVALID ORDER QUERY",
+    });
+  }
 
   let queryStr = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, CAST(COUNT(comments.article_id) AS INT) AS comment_count 
   FROM articles

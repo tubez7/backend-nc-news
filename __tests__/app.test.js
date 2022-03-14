@@ -157,7 +157,6 @@ describe("QUERIES ON GET request for /api/articles", () => {
       .query(query)
       .expect(200)
       .then(({ body }) => {
-        console.log(body.articles, "in test block");
         expect(body.articles).toBeSortedBy("author");
         expect(body.articles).toHaveLength(11);
         body.articles.forEach((article) => {
@@ -181,26 +180,30 @@ describe("QUERIES ON GET request for /api/articles", () => {
   });
 });
 
-//--------ERRORS FOR GET REQUESTS ON ARTICLES + QUERIES
+// --------ERRORS FOR GET REQUESTS ON ARTICLES + QUERIES
 
-// describe("ERROR handling GET request on /api/articles", () => {
-//   test("should respond with status 400 - bad request when request body incorrectly formatted", () => {
-//     const query = { INCORRECT_KEY: "author"};
-//     return request(app)
-//       .get(`/api/articles`)
-//       .query(query)
-//       .expect(400)
-//       .then((res) => {
-//         console.log(res.body, "inside test block")
-//         expect(res.body.msg).toBe("bad request - invalid query format");
-//       });
-//   });
-// });
-
-
-
-
-
+describe("ERROR handling GET request on /api/articles", () => {
+  test("should respond with status 400 - invalid sort query when request sort by property is invalid", () => {
+    const query = { sort_by: "INVALID" };
+    return request(app)
+      .get(`/api/articles`)
+      .query(query)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("bad request - INVALID SORT QUERY");
+      });
+  });
+  test("should respond with status 400 - invalid order query when request order property is invalid", () => {
+    const query = { order: "INVALID" };
+    return request(app)
+      .get(`/api/articles`)
+      .query(query)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("bad request - INVALID ORDER QUERY");
+      });
+  });
+});
 
 //---------GET REQUEST ON ARTICLES BY ARTICLE ID
 
