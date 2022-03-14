@@ -532,3 +532,14 @@ describe("ERROR handling GET request on /api/articles/:article_id/comments", () 
       });
   });
 });
+
+//  -----DELETE REQUEST ON /api/comments/:comment_id
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("should respond with status 204 - no content and successfully deletes correct comment", () => {
+    const commentId = 1;
+    return request(app)
+    .delete(`/api/comments/${commentId}`)
+    .expect(204);
+  });
+});
