@@ -20,13 +20,17 @@ exports.insertCommentById = (commentBody, articleId, username) => {
 };
 
 exports.removeCommentById = (commentId) => {
-  console.log(commentId, "inside delete model");
   return db
     .query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *;`, [
       commentId,
     ])
-    .then((res) => {
-      console.log(res.rows, "deleted comment in model");
-      return res.rows[0];
+    .then((comment) => {
+      if (comment.rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `comment ${commentId} not found`,
+        });
+      }
+      return comment.rows[0];
     });
 };

@@ -36,10 +36,8 @@ exports.postCommentById = (req, res, next) => {
 
 exports.deleteCommentById = (req, res, next) => {
   const { comment_id: commentId } = req.params;
-  console.log(commentId, "inside the delete controller");
   removeCommentById(commentId)
-    .then((response) => {
-      console.log(response, "response data in controller")
+    .then(() => {
       res.status(204).send();
     })
     .catch((err) => {
