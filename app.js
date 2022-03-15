@@ -16,7 +16,7 @@ const {
 
 const { getUsers } = require("./controllers/users-controllers");
 
-const { postCommentById, getCommentsByArticleId } = require("./controllers/comments-controllers");
+const { postCommentById, getCommentsByArticleId, deleteCommentById } = require("./controllers/comments-controllers");
 
 //----APP-------------------------
 
@@ -37,6 +37,9 @@ app.get(`/api/articles/:article_id/comments`, getCommentsByArticleId);
 app.patch(`/api/articles/:article_id`, patchArticleById);
 
 app.post(`/api/articles/:article_id/comments`, postCommentById);
+
+app.delete(`/api/comments/:comment_id`, deleteCommentById)
+
 
 //------GENERIC ENDPOINT ERROR CATCH-------------------
 

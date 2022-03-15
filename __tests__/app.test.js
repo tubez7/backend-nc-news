@@ -532,3 +532,38 @@ describe("ERROR handling GET request on /api/articles/:article_id/comments", () 
       });
   });
 });
+
+//  -----DELETE REQUEST ON /api/comments/:comment_id
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("should respond with status 204 - no content and successfully deletes correct comment", () => {
+    const commentId = 1;
+    return request(app).delete(`/api/comments/${commentId}`).expect(204);
+  });
+});
+
+
+
+//  -----ERRORS FOR DELETE REQUEST ON /api/comments/:comment_id
+
+
+describe("ERRORS on DELETE /api/comments/:comment_id", () => {
+  test("should respond with status 404 - when article id is valid but doesn't exist on database", () => {
+    const commentId = 9999;
+    return request(app)
+      .delete(`/api/comments/${commentId}`)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe(`comment ${commentId} not found`);
+      });
+  });
+  test("should respond with status 400 - bad request when article id is invalid", () => {
+    const commentId = "NOT_A_NUMBER";
+    return request(app)
+      .delete(`/api/comments/${commentId}`)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe(`bad request`);
+      });
+  });
+});
