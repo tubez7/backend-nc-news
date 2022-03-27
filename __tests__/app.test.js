@@ -7,32 +7,58 @@ const testData = require("../db/data/test-data/index");
 afterAll(() => db.end());
 beforeEach(() => seed(testData));
 
-//----------GENERIC SERVER ERROR
+//-------GENERIC SERVER ENDPOINT ERROR
 
 describe("Generic invalid endpoint error", () => {
   test("Entering invalid endpoint should return 404 path not found", () => {
     return request(app)
       .get("/Not-An-API")
       .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("path not found");
+      .then(({body}) => {
+        expect(body.msg).toBe("path not found");
       });
   });
 });
 
-//-------GET REQUESTS ON TOPICS
+//-------GET request on /api
+
+describe("GET request on /api", () => {
+  test("should respond with status 200 and a JSON describing all available endpoints", () => {
+    return (
+      request(app)
+      .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.api).toBeInstanceOf(Object);
+          expect(body.api).toEqual(
+            expect.objectContaining({
+              "GET /api": expect.any(Object),
+              "GET /api/topics": expect.any(Object),
+              "GET /api/articles": expect.any(Object),
+              "GET /api/articles/:article_id": expect.any(Object),
+              "GET /api/users": expect.any(Object),
+              "GET /api/articles/:article_id/comments": expect.any(Object),
+              "PATCH /api/articles/:article_id": expect.any(Object),
+              "POST /api/articles/:article_id/comments": expect.any(Object),
+              "DELETE /api/comments/:comment_id": expect.any(Object),
+            })
+          );
+        })
+    );
+  });
+});
+
+//-------GET request on /api/topics
 
 describe("GET request on /api/topics", () => {
   test("should respond with status 200 and an array of all topic objects, each of which should have slug and description properties", () => {
     return request(app)
-      .get(`/api/topics`)
+      .get("/api/topics")
       .expect(200)
-      .then((res) => {
-        expect(res.body.topics).toBeInstanceOf(Array);
-        expect(res.body.topics).toHaveLength(3);
-        //res.body = obj with key of topics
-        //res.body.topics = array of objects
-        res.body.topics.forEach((topic) => {
+      .then(({ body }) => {
+        expect(body.topics).toBeInstanceOf(Array);
+        expect(body.topics).toHaveLength(3);
+        body.topics.forEach((topic) => {
           expect(topic).toEqual(
             expect.objectContaining({
               description: expect.any(String),
@@ -44,18 +70,17 @@ describe("GET request on /api/topics", () => {
   });
 });
 
-//---------GET REQUEST ON ARTICLES
+//-------GET request on /api/articles
 
 describe("GET request on /api/articles", () => {
   test("should respond with status 200 and an array of all article objects on a key of articles sorted in date order descending", () => {
     return request(app)
-      .get("/api/articles")
+      .get(`/api/articles`)
       .expect(200)
       .then(({ body }) => {
         expect(body.articles).toBeInstanceOf(Array);
         expect(body.articles).toHaveLength(12);
         expect(body.articles).toBeSortedBy("created_at", { descending: true });
-
         body.articles.forEach((article) => {
           expect(article).toEqual(
             expect.objectContaining({
@@ -75,7 +100,7 @@ describe("GET request on /api/articles", () => {
 describe("REFACTORED GET request on /api/articles", () => {
   test("should respond with status 200 and an array of all article objects, including a comment_count property, on a key of articles", () => {
     return request(app)
-      .get("/api/articles")
+      .get(`/api/articles`)
       .expect(200)
       .then(({ body }) => {
         body.articles.forEach((article) => {
@@ -89,11 +114,13 @@ describe("REFACTORED GET request on /api/articles", () => {
   });
 });
 
-describe("QUERIES ON GET request for /api/articles", () => {
+//-------QUERIES for GET request on /api/articles
+
+describe("QUERIES for GET request on /api/articles", () => {
   test("should accept a sort by query which sorts the articles by any valid column - defaults to date", () => {
     const sortBy = { sort_by: "title" };
     return request(app)
-      .get("/api/articles")
+      .get(`/api/articles`)
       .query(sortBy)
       .expect(200)
       .then(({ body }) => {
@@ -103,7 +130,7 @@ describe("QUERIES ON GET request for /api/articles", () => {
   test("sort test with different sort field", () => {
     const sortBy = { sort_by: "comment_count" };
     return request(app)
-      .get("/api/articles")
+      .get(`/api/articles`)
       .query(sortBy)
       .expect(200)
       .then(({ body }) => {
@@ -115,7 +142,7 @@ describe("QUERIES ON GET request for /api/articles", () => {
   test("will sort in ascending order when provided in request query", () => {
     const order = { order: "asc" };
     return request(app)
-      .get("/api/articles")
+      .get(`/api/articles`)
       .query(order)
       .expect(200)
       .then(({ body }) => {
@@ -125,7 +152,7 @@ describe("QUERIES ON GET request for /api/articles", () => {
   test("will sort in ascending order when provided in request query with a sort by query", () => {
     const query = { sort_by: "comment_count", order: "asc" };
     return request(app)
-      .get("/api/articles")
+      .get(`/api/articles`)
       .query(query)
       .expect(200)
       .then(({ body }) => {
@@ -135,7 +162,7 @@ describe("QUERIES ON GET request for /api/articles", () => {
   test("will filter the articles by topic when present in the request query", () => {
     const topic = { topic: "mitch" };
     return request(app)
-      .get("/api/articles")
+      .get(`/api/articles`)
       .query(topic)
       .expect(200)
       .then(({ body }) => {
@@ -153,7 +180,7 @@ describe("QUERIES ON GET request for /api/articles", () => {
   test("will return the correct query result with multiple query fields", () => {
     const query = { topic: "mitch", sort_by: "author", order: "asc" };
     return request(app)
-      .get("/api/articles")
+      .get(`/api/articles`)
       .query(query)
       .expect(200)
       .then(({ body }) => {
@@ -171,7 +198,7 @@ describe("QUERIES ON GET request for /api/articles", () => {
   test("will return the correct query result with multiple query fields", () => {
     const query = { topic: "paper", sort_by: "author", order: "asc" };
     return request(app)
-      .get("/api/articles")
+      .get(`/api/articles`)
       .query(query)
       .expect(200)
       .then(({ body }) => {
@@ -180,7 +207,7 @@ describe("QUERIES ON GET request for /api/articles", () => {
   });
 });
 
-// --------ERRORS FOR GET REQUESTS ON ARTICLES + QUERIES
+//-------ERROR handling GET request on /api/articles
 
 describe("ERROR handling GET request on /api/articles", () => {
   test("should respond with status 400 - invalid sort query when request sort by property is invalid", () => {
@@ -189,8 +216,8 @@ describe("ERROR handling GET request on /api/articles", () => {
       .get(`/api/articles`)
       .query(query)
       .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("bad request - INVALID SORT QUERY");
+      .then(({body}) => {
+        expect(body.msg).toBe("bad request - INVALID SORT QUERY");
       });
   });
   test("should respond with status 400 - invalid order query when request order property is invalid", () => {
@@ -199,13 +226,13 @@ describe("ERROR handling GET request on /api/articles", () => {
       .get(`/api/articles`)
       .query(query)
       .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("bad request - INVALID ORDER QUERY");
+      .then(({body}) => {
+        expect(body.msg).toBe("bad request - INVALID ORDER QUERY");
       });
   });
 });
 
-//---------GET REQUEST ON ARTICLES BY ARTICLE ID
+//-------GET request on /api/articles/:article_id
 
 describe("GET request on /api/articles/:article_id", () => {
   test("should respond with status 200 and a single article object on a key of article", () => {
@@ -246,7 +273,7 @@ describe("REFACTORED GET request on /api/articles/:article_id", () => {
   });
 });
 
-//--------ERRORS FOR GET REQUESTS ON ARTICLE ID
+//-------ERROR handling GET request on /api/articles/:article_id
 
 describe("ERROR handling GET request on /api/articles/:article_id", () => {
   test("respond with status 400 - bad request when article_id is not a number", () => {
@@ -254,8 +281,8 @@ describe("ERROR handling GET request on /api/articles/:article_id", () => {
     return request(app)
       .get(`/api/articles/${articleId}`)
       .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("bad request");
+      .then(({body}) => {
+        expect(body.msg).toBe("bad request");
       });
   });
   test("respond with status 404 - article not found for valid but non-existent article_id", () => {
@@ -269,7 +296,7 @@ describe("ERROR handling GET request on /api/articles/:article_id", () => {
   });
 });
 
-//----------PATCH REQUESTS ON ARTICLES
+//-------PATCH request on /api/articles/:article_id
 
 describe("PATCH request on /api/articles/:article_id", () => {
   test("status: 201 - request body object should update the vote property of the article and respond with an article object on key of article", () => {
@@ -279,9 +306,9 @@ describe("PATCH request on /api/articles/:article_id", () => {
       .patch(`/api/articles/${articleId}`)
       .send(vote)
       .expect(200)
-      .then((res) => {
-        expect(res.body.article).toBeInstanceOf(Object);
-        expect(res.body.article).toEqual(
+      .then(({body}) => {
+        expect(body.article).toBeInstanceOf(Object);
+        expect(body.article).toEqual(
           expect.objectContaining({
             author: "butter_bridge",
             title: "Living in the shadow of a great man",
@@ -318,9 +345,9 @@ describe("PATCH request on /api/articles/:article_id", () => {
   });
 });
 
-//---------PATCH REQUEST ERRORS ON ARTICLE_ID
+//-------ERROR handling PATCH request on /api/articles/:article_id
 
-describe("ERROR handling patch request on /api/articles/:article_id", () => {
+describe("ERROR handling PATCH request on /api/articles/:article_id", () => {
   test("should respond with status 400 - bad request when article_id is not a number", () => {
     const articleId = "NOT_A_NUMBER";
     const vote = { inc_votes: 1 };
@@ -328,8 +355,8 @@ describe("ERROR handling patch request on /api/articles/:article_id", () => {
       .patch(`/api/articles/${articleId}`)
       .send(vote)
       .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("bad request");
+      .then(({body}) => {
+        expect(body.msg).toBe("bad request");
       });
   });
   test("should should respond with status 400 - bad request when vote object property is not a number", () => {
@@ -339,8 +366,8 @@ describe("ERROR handling patch request on /api/articles/:article_id", () => {
       .patch(`/api/articles/${articleId}`)
       .send(vote)
       .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("bad request");
+      .then(({body}) => {
+        expect(body.msg).toBe("bad request");
       });
   });
   test("should should respond with status 400 - bad request when vote object key is not valid", () => {
@@ -350,8 +377,8 @@ describe("ERROR handling patch request on /api/articles/:article_id", () => {
       .patch(`/api/articles/${articleId}`)
       .send(vote)
       .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("bad request");
+      .then(({body}) => {
+        expect(body.msg).toBe("bad request");
       });
   });
   test("should should respond with status 400 - bad request when vote object is not provided", () => {
@@ -360,8 +387,8 @@ describe("ERROR handling patch request on /api/articles/:article_id", () => {
       .patch(`/api/articles/${articleId}`)
       .send()
       .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("bad request");
+      .then(({body}) => {
+        expect(body.msg).toBe("bad request");
       });
   });
   test("respond with status 404 - article not found for valid but non-existent article_id", () => {
@@ -377,7 +404,7 @@ describe("ERROR handling patch request on /api/articles/:article_id", () => {
   });
 });
 
-//-----------GET REQUEST FOR USERS--------
+//-------GET request on /api/users
 
 describe("GET request on /api/users", () => {
   test("return an array of all user objects.", () => {
@@ -398,9 +425,9 @@ describe("GET request on /api/users", () => {
   });
 });
 
-// ---------------POST REQUEST ON ARTICLE_ID COMMENTS
+//-------POST request on /api/articles/:article_id/comments
 
-describe("POST /api/articles/:article_id/comments", () => {
+describe("POST request on /api/articles/:article_id/comments", () => {
   test("should add comment to the db. Responds with status: 201 and the posted comment on a key of comment", () => {
     const articleId = 1;
     const comment = { username: "rogersop", body: "test_body" };
@@ -424,9 +451,9 @@ describe("POST /api/articles/:article_id/comments", () => {
   });
 });
 
-//---------ERRORS FOR POST REQUEST ON COMMENTS
+//-------ERROR handling POST request on /api/articles/:article_id/comments
 
-describe("Errors on POST /api/articles/:article_id/comments", () => {
+describe("ERROR handling POST request on /api/articles/:article_id/comments", () => {
   test("should respond with 400 bad request when article_id is not a number", () => {
     const articleId = "NOT_A_NUMBER";
     const comment = { username: "rogersop", body: "test_body" };
@@ -434,8 +461,8 @@ describe("Errors on POST /api/articles/:article_id/comments", () => {
       .post(`/api/articles/${articleId}/comments`)
       .send(comment)
       .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("bad request");
+      .then(({body}) => {
+        expect(body.msg).toBe("bad request");
       });
   });
   test("should respond with 400 bad request when request body is incorrectly formatted ", () => {
@@ -445,8 +472,8 @@ describe("Errors on POST /api/articles/:article_id/comments", () => {
       .post(`/api/articles/${articleId}/comments`)
       .send(comment)
       .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("bad request");
+      .then(({body}) => {
+        expect(body.msg).toBe("bad request");
       });
   });
   test("should respond with 400 bad request - INVALID USERNAME when username does not exist on database", () => {
@@ -456,8 +483,8 @@ describe("Errors on POST /api/articles/:article_id/comments", () => {
       .post(`/api/articles/${articleId}/comments`)
       .send(comment)
       .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("bad request - INVALID USERNAME");
+      .then(({body}) => {
+        expect(body.msg).toBe("bad request - INVALID USERNAME");
       });
   });
   test("should respond with status 404 - article not found for valid but non-existent article_id", () => {
@@ -467,15 +494,15 @@ describe("Errors on POST /api/articles/:article_id/comments", () => {
       .post(`/api/articles/${articleId}/comments`)
       .send(comment)
       .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe(`article ${articleId} not found`);
+      .then(({body}) => {
+        expect(body.msg).toBe(`article ${articleId} not found`);
       });
   });
 });
 
-//  GET REQUEST FOR COMMENTS BY ARTICLE ID
+//-------GET request on /api/articles/:article_id/comments
 
-describe("GET /api/articles/:article_id/comments", () => {
+describe("GET request on /api/articles/:article_id/comments", () => {
   test("should respond with status 200 and an array of all comments for the requested article", () => {
     const articleId = 1;
     return request(app)
@@ -502,15 +529,15 @@ describe("GET /api/articles/:article_id/comments", () => {
     return request(app)
       .get(`/api/articles/${articleId}/comments`)
       .expect(200)
-      .then((res) => {
-        expect(res.body.comments).toBeInstanceOf(Array);
-        expect(res.body.comments).toHaveLength(0);
-        expect(res.body.comments).toEqual([]);
+      .then(({body}) => {
+        expect(body.comments).toBeInstanceOf(Array);
+        expect(body.comments).toHaveLength(0);
+        expect(body.comments).toEqual([]);
       });
   });
 });
 
-//----ERRORS FOR GET COMMENTS BY ARTICLE ID
+//-------ERROR handling GET request on /api/articles/:article_id/comments
 
 describe("ERROR handling GET request on /api/articles/:article_id/comments", () => {
   test("should respond with status 400 - bad request when article_id is not a number", () => {
@@ -518,8 +545,8 @@ describe("ERROR handling GET request on /api/articles/:article_id/comments", () 
     return request(app)
       .get(`/api/articles/${articleId}/comments`)
       .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("bad request");
+      .then(({body}) => {
+        expect(body.msg).toBe("bad request");
       });
   });
   test("should respond with status 404 - not found when article_id is a number that does not exist on database", () => {
@@ -527,34 +554,33 @@ describe("ERROR handling GET request on /api/articles/:article_id/comments", () 
     return request(app)
       .get(`/api/articles/${articleId}/comments`)
       .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe(`article ${articleId} not found`);
+      .then(({body}) => {
+        expect(body.msg).toBe(`article ${articleId} not found`);
       });
   });
 });
 
-//  -----DELETE REQUEST ON /api/comments/:comment_id
+//-------DELETE request on /api/comments/:comment_id
 
-describe("DELETE /api/comments/:comment_id", () => {
+describe("DELETE request on /api/comments/:comment_id", () => {
   test("should respond with status 204 - no content and successfully deletes correct comment", () => {
     const commentId = 1;
-    return request(app).delete(`/api/comments/${commentId}`).expect(204);
+    return request(app)
+    .delete(`/api/comments/${commentId}`)
+    .expect(204);
   });
 });
 
+//-------ERROR handling DELETE request on /api/comments/:comment_id
 
-
-//  -----ERRORS FOR DELETE REQUEST ON /api/comments/:comment_id
-
-
-describe("ERRORS on DELETE /api/comments/:comment_id", () => {
+describe("ERROR handling DELETE request on /api/comments/:comment_id", () => {
   test("should respond with status 404 - when article id is valid but doesn't exist on database", () => {
     const commentId = 9999;
     return request(app)
       .delete(`/api/comments/${commentId}`)
       .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe(`comment ${commentId} not found`);
+      .then(({body}) => {
+        expect(body.msg).toBe(`comment ${commentId} not found`);
       });
   });
   test("should respond with status 400 - bad request when article id is invalid", () => {
@@ -562,8 +588,8 @@ describe("ERRORS on DELETE /api/comments/:comment_id", () => {
     return request(app)
       .delete(`/api/comments/${commentId}`)
       .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe(`bad request`);
+      .then(({body}) => {
+        expect(body.msg).toBe(`bad request`);
       });
   });
 });
