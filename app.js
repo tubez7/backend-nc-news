@@ -35,7 +35,6 @@ app.delete(`/api/comments/:comment_id`, deleteCommentById)
 //-------GENERIC ENDPOINT ERROR CATCH-------
 
 app.all("/*", (req, res) => {
-  console.log(res, "error at 404 app level");
   res.status(404).send({ msg: "path not found" });
 });
 
@@ -50,6 +49,7 @@ app.use(handleServerErrors);
 //--------------
 
 module.exports = app;
+  
 
 
 
