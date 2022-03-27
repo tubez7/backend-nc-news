@@ -18,13 +18,19 @@ const { getUsers } = require("./controllers/users-controllers");
 
 const { postCommentById, getCommentsByArticleId, deleteCommentById } = require("./controllers/comments-controllers");
 
-//----APP-------------------------
+const { getApi } = require("./controllers/api-controllers");
+
+//-------APP-------
 
 const app = express();
 
 app.use(express.json());
 
-app.get(`/api/topics`, getTopics); //passes to controller
+//-------ENDPOINTS-------
+
+app.get(`/api`, getApi);
+
+app.get(`/api/topics`, getTopics); 
 
 app.get(`/api/articles`, getArticles);
 
@@ -40,20 +46,21 @@ app.post(`/api/articles/:article_id/comments`, postCommentById);
 
 app.delete(`/api/comments/:comment_id`, deleteCommentById)
 
-
-//------GENERIC ENDPOINT ERROR CATCH-------------------
+//-------GENERIC ENDPOINT ERROR CATCH-------
 
 app.all("/*", (req, res) => {
   console.log(res, "error at 404 app level");
   res.status(404).send({ msg: "path not found" });
 });
 
-//------ERROR HANDLING------------------------------------
+//-------ERROR HANDLING-------
 
 app.use(handlePsqlErrors);
 
 app.use(handleCustomErrors);
 
 app.use(handleServerErrors);
+
+//--------------
 
 module.exports = app;
