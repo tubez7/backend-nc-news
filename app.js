@@ -1,23 +1,9 @@
 const express = require("express");
-
-const {
-  handleCustomErrors,
-  handlePsqlErrors,
-  handleServerErrors,
-} = require("./errors/index");
-
+const { handleCustomErrors, handlePsqlErrors, handleServerErrors } = require("./errors/index");
 const { getTopics } = require("./controllers/topics-controllers.js");
-
-const {
-  getArticleById,
-  patchArticleById,
-  getArticles,
-} = require("./controllers/articles-controllers.js");
-
+const { getArticleById, patchArticleById, getArticles } = require("./controllers/articles-controllers.js");
 const { getUsers } = require("./controllers/users-controllers");
-
 const { postCommentById, getCommentsByArticleId, deleteCommentById } = require("./controllers/comments-controllers");
-
 const { getApi } = require("./controllers/api-controllers");
 
 //-------APP-------
@@ -64,3 +50,9 @@ app.use(handleServerErrors);
 //--------------
 
 module.exports = app;
+
+
+
+
+
+
