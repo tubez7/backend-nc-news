@@ -1,10 +1,19 @@
 const db = require("../db/connection.js");
 
 exports.fetchArticles = (sortBy = "created_at", order = "DESC", topic) => {
-  
   const queryValues = [];
 
-  if (!["title", "topic", "author", "body", "created_at", "votes", "comment_count"].includes(sortBy)) {
+  if (
+    ![
+      "title",
+      "topic",
+      "author",
+      "body",
+      "created_at",
+      "votes",
+      "comment_count",
+    ].includes(sortBy)
+  ) {
     return Promise.reject({
       status: 400,
       msg: "bad request - INVALID SORT QUERY",
@@ -72,8 +81,6 @@ exports.updateArticleById = (articleId, vote) => {
           msg: `article ${articleId} not found`,
         });
       }
-      // article = result object
-      // article.rows = returned array from SQL query
       return article.rows[0];
     });
 };
@@ -90,10 +97,3 @@ exports.checkArticleExists = (articleId) => {
       }
     });
 };
-
-`SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, CAST(COUNT(comments.article_id) AS INT) AS comment_count 
-  FROM articles
-  FULL JOIN comments 
-  ON articles.article_id = comments.article_id 
-  GROUP BY articles.article_id
-  ORDER BY created_at DESC;`;
