@@ -40,9 +40,9 @@ app.all("/*", (req, res) => {
 
 //-------ERROR HANDLING-------
 
-app.use(handlePsqlErrors);
-
 app.use(handleCustomErrors);
+
+app.use(handlePsqlErrors);
 
 app.use(handleServerErrors);
 

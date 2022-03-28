@@ -9,7 +9,9 @@
     "test": "jest",
     "prepare": "husky install",
     "query": "psql -f ./query-sql.sql > query.txt",
-    "testseed": "node testSeed.js"
+    "testseed": "node testSeed.js",
+    "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed",
+    "start": "node listen.js"
   },
   "repository": {
     "type": "git",
