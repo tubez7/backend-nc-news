@@ -44,5 +44,5 @@ You will need to make sure you have installed `Node.js v10.19.0` and `Postgres v
 
 
 ## Future Additions
-Whilst the core of the poject is complete, this API is an ongoing work in progress and I hope to be able to add further additional features and endpoints in the future.
+Whilst the core of the project is complete, this API is an ongoing work in progress and I hope to be able to add further additional features and endpoints in the future.
 
