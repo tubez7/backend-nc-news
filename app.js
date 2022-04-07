@@ -5,12 +5,20 @@ const { getArticleById, patchArticleById, getArticles } = require("./controllers
 const { getUsers } = require("./controllers/users-controllers");
 const { postCommentById, getCommentsByArticleId, deleteCommentById } = require("./controllers/comments-controllers");
 const { getApi } = require("./controllers/api-controllers");
+const cors = require("cors");
 
 //-------APP-------
 
 const app = express();
 
 app.use(express.json());
+
+app.use(cors());
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 //-------ENDPOINTS-------
 
