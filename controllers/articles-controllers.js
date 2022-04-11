@@ -16,7 +16,7 @@ exports.getArticles = (req, res, next) => {
 };
 
 exports.getArticleById = (req, res, next) => {
-  const { article_id: articleId } = req.params; // req.params = { article_id: '1' }
+  const { article_id: articleId } = req.params; 
   fetchArticleById(articleId)
     .then((article) => {
       res.status(200).send({ article });
@@ -27,8 +27,8 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.patchArticleById = (req, res, next) => {
-  const { inc_votes: vote } = req.body; //deconstruct inc_votes from req.body & rename as variable vote
-  const { article_id: articleId } = req.params; //deconstruct article_id from req.params & rename as variable articleId
+  const { inc_votes: vote } = req.body; 
+  const { article_id: articleId } = req.params; 
   updateArticleById(articleId, vote)
     .then((article) => {
       res.status(200).send({ article });
