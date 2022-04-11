@@ -595,3 +595,5 @@ describe("ERROR handling DELETE request on /api/comments/:comment_id", () => {
       });
   });
 });
+
+//-------GET request on /api/users/:username
