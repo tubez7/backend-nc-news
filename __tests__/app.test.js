@@ -418,12 +418,14 @@ describe("GET request on /api/users", () => {
           expect(user).toEqual(
             expect.objectContaining({
               username: expect.any(String),
+              avatar_url: expect.any(String),
             })
           );
         });
       });
   });
 });
+              
 
 //-------POST request on /api/articles/:article_id/comments
 
