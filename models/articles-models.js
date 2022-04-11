@@ -42,7 +42,7 @@ exports.fetchArticles = (sortBy = "created_at", order = "DESC", topic) => {
       queryValues
     )
     .then((articles) => {
-      return articles.rows; //array of all articles on db
+      return articles.rows;
     });
 };
 
