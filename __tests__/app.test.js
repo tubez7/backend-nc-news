@@ -14,7 +14,7 @@ describe("Generic invalid endpoint error", () => {
     return request(app)
       .get("/Not-An-API")
       .expect(404)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe("path not found");
       });
   });
@@ -24,27 +24,25 @@ describe("Generic invalid endpoint error", () => {
 
 describe("GET request on /api", () => {
   test("should respond with status 200 and a JSON describing all available endpoints", () => {
-    return (
-      request(app)
+    return request(app)
       .get("/api")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body.api).toBeInstanceOf(Object);
-          expect(body.api).toEqual(
-            expect.objectContaining({
-              "GET /api": expect.any(Object),
-              "GET /api/topics": expect.any(Object),
-              "GET /api/articles": expect.any(Object),
-              "GET /api/articles/:article_id": expect.any(Object),
-              "GET /api/users": expect.any(Object),
-              "GET /api/articles/:article_id/comments": expect.any(Object),
-              "PATCH /api/articles/:article_id": expect.any(Object),
-              "POST /api/articles/:article_id/comments": expect.any(Object),
-              "DELETE /api/comments/:comment_id": expect.any(Object),
-            })
-          );
-        })
-    );
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.api).toBeInstanceOf(Object);
+        expect(body.api).toEqual(
+          expect.objectContaining({
+            "GET /api": expect.any(Object),
+            "GET /api/topics": expect.any(Object),
+            "GET /api/articles": expect.any(Object),
+            "GET /api/articles/:article_id": expect.any(Object),
+            "GET /api/users": expect.any(Object),
+            "GET /api/articles/:article_id/comments": expect.any(Object),
+            "PATCH /api/articles/:article_id": expect.any(Object),
+            "POST /api/articles/:article_id/comments": expect.any(Object),
+            "DELETE /api/comments/:comment_id": expect.any(Object),
+          })
+        );
+      });
   });
 });
 
@@ -216,7 +214,7 @@ describe("ERROR handling GET request on /api/articles", () => {
       .get(`/api/articles`)
       .query(query)
       .expect(400)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe("bad request - INVALID SORT QUERY");
       });
   });
@@ -226,7 +224,7 @@ describe("ERROR handling GET request on /api/articles", () => {
       .get(`/api/articles`)
       .query(query)
       .expect(400)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe("bad request - INVALID ORDER QUERY");
       });
   });
@@ -281,7 +279,7 @@ describe("ERROR handling GET request on /api/articles/:article_id", () => {
     return request(app)
       .get(`/api/articles/${articleId}`)
       .expect(400)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe("bad request");
       });
   });
@@ -306,7 +304,7 @@ describe("PATCH request on /api/articles/:article_id", () => {
       .patch(`/api/articles/${articleId}`)
       .send(vote)
       .expect(200)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.article).toBeInstanceOf(Object);
         expect(body.article).toEqual(
           expect.objectContaining({
@@ -355,7 +353,7 @@ describe("ERROR handling PATCH request on /api/articles/:article_id", () => {
       .patch(`/api/articles/${articleId}`)
       .send(vote)
       .expect(400)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe("bad request");
       });
   });
@@ -366,7 +364,7 @@ describe("ERROR handling PATCH request on /api/articles/:article_id", () => {
       .patch(`/api/articles/${articleId}`)
       .send(vote)
       .expect(400)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe("bad request");
       });
   });
@@ -377,7 +375,7 @@ describe("ERROR handling PATCH request on /api/articles/:article_id", () => {
       .patch(`/api/articles/${articleId}`)
       .send(vote)
       .expect(400)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe("bad request");
       });
   });
@@ -387,7 +385,7 @@ describe("ERROR handling PATCH request on /api/articles/:article_id", () => {
       .patch(`/api/articles/${articleId}`)
       .send()
       .expect(400)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe("bad request");
       });
   });
@@ -425,7 +423,6 @@ describe("GET request on /api/users", () => {
       });
   });
 });
-              
 
 //-------POST request on /api/articles/:article_id/comments
 
@@ -463,7 +460,7 @@ describe("ERROR handling POST request on /api/articles/:article_id/comments", ()
       .post(`/api/articles/${articleId}/comments`)
       .send(comment)
       .expect(400)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe("bad request");
       });
   });
@@ -474,7 +471,7 @@ describe("ERROR handling POST request on /api/articles/:article_id/comments", ()
       .post(`/api/articles/${articleId}/comments`)
       .send(comment)
       .expect(400)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe("bad request");
       });
   });
@@ -485,7 +482,7 @@ describe("ERROR handling POST request on /api/articles/:article_id/comments", ()
       .post(`/api/articles/${articleId}/comments`)
       .send(comment)
       .expect(400)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe("bad request - INVALID USERNAME");
       });
   });
@@ -496,7 +493,7 @@ describe("ERROR handling POST request on /api/articles/:article_id/comments", ()
       .post(`/api/articles/${articleId}/comments`)
       .send(comment)
       .expect(404)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe(`article ${articleId} not found`);
       });
   });
@@ -531,7 +528,7 @@ describe("GET request on /api/articles/:article_id/comments", () => {
     return request(app)
       .get(`/api/articles/${articleId}/comments`)
       .expect(200)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.comments).toBeInstanceOf(Array);
         expect(body.comments).toHaveLength(0);
         expect(body.comments).toEqual([]);
@@ -547,7 +544,7 @@ describe("ERROR handling GET request on /api/articles/:article_id/comments", () 
     return request(app)
       .get(`/api/articles/${articleId}/comments`)
       .expect(400)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe("bad request");
       });
   });
@@ -556,7 +553,7 @@ describe("ERROR handling GET request on /api/articles/:article_id/comments", () 
     return request(app)
       .get(`/api/articles/${articleId}/comments`)
       .expect(404)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe(`article ${articleId} not found`);
       });
   });
@@ -567,9 +564,7 @@ describe("ERROR handling GET request on /api/articles/:article_id/comments", () 
 describe("DELETE request on /api/comments/:comment_id", () => {
   test("should respond with status 204 - no content and successfully deletes correct comment", () => {
     const commentId = 1;
-    return request(app)
-    .delete(`/api/comments/${commentId}`)
-    .expect(204);
+    return request(app).delete(`/api/comments/${commentId}`).expect(204);
   });
 });
 
@@ -581,7 +576,7 @@ describe("ERROR handling DELETE request on /api/comments/:comment_id", () => {
     return request(app)
       .delete(`/api/comments/${commentId}`)
       .expect(404)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe(`comment ${commentId} not found`);
       });
   });
@@ -590,10 +585,45 @@ describe("ERROR handling DELETE request on /api/comments/:comment_id", () => {
     return request(app)
       .delete(`/api/comments/${commentId}`)
       .expect(400)
-      .then(({body}) => {
+      .then(({ body }) => {
         expect(body.msg).toBe(`bad request`);
       });
   });
 });
 
 //-------GET request on /api/users/:username
+
+describe("GET request on /api/users/:username", () => {
+  test("should respond with status 200 and a single user object on a key of user", () => {
+    const username = "lurker";
+    return request(app)
+      .get(`/api/users/${username}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.user).toBeInstanceOf(Object);
+        expect(body.user).toEqual(
+          expect.objectContaining({
+            username: "lurker",
+            name: "do_nothing",
+            avatar_url:
+              "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+          })
+        );
+      });
+  });
+});
+
+//-------ERROR handling GET request on /api/users/:username
+
+describe("ERROR handling GET request on /api/users/:username", () => {
+  test("should respond with status 404 - user not found for non-existent username", () => {
+    const username = 9999;
+    return request(app)
+      .get(`/api/users/${username}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`username ${username} does not exist`);
+      });
+  });
+});
+    
