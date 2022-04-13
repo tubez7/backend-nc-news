@@ -593,7 +593,7 @@ describe("ERROR handling DELETE request on /api/comments/:comment_id", () => {
 
 //-------GET request on /api/users/:username
 
-describe("GET request on /api/users/:username", () => {
+describe.only("GET request on /api/users/:username", () => {
   test("should respond with status 200 and a single user object on a key of user", () => {
     const username = "lurker";
     return request(app)
@@ -609,6 +609,20 @@ describe("GET request on /api/users/:username", () => {
               "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
           })
         );
+      });
+  });
+});
+
+//-------ERROR handling GET request on /api/users/:username
+
+describe.only("ERROR handling GET request on /api/users/:username", () => {
+  test("should respond with status 404 - user not found for valid but non-existent username", () => {
+    const username = "NOT_A_USERNAME";
+    return request(app)
+      .get(`/api/users/${username}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`username ${username} does not exist`);
       });
   });
 });
