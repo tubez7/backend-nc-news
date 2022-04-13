@@ -2,7 +2,7 @@ const express = require("express");
 const { handleCustomErrors, handlePsqlErrors, handleServerErrors } = require("./errors/index");
 const { getTopics } = require("./controllers/topics-controllers.js");
 const { getArticleById, patchArticleById, getArticles } = require("./controllers/articles-controllers.js");
-const { getUsers } = require("./controllers/users-controllers");
+const { getUsers, getUser } = require("./controllers/users-controllers");
 const { postCommentById, getCommentsByArticleId, deleteCommentById } = require("./controllers/comments-controllers");
 const { getApi } = require("./controllers/api-controllers");
 const cors = require("cors");
@@ -38,7 +38,9 @@ app.patch(`/api/articles/:article_id`, patchArticleById);
 
 app.post(`/api/articles/:article_id/comments`, postCommentById);
 
-app.delete(`/api/comments/:comment_id`, deleteCommentById)
+app.delete(`/api/comments/:comment_id`, deleteCommentById);
+
+app.get(`/api/users/:username`, getUser);
 
 //-------GENERIC ENDPOINT ERROR CATCH-------
 
