@@ -593,7 +593,7 @@ describe("ERROR handling DELETE request on /api/comments/:comment_id", () => {
 
 //-------GET request on /api/users/:username
 
-describe.only("GET request on /api/users/:username", () => {
+describe("GET request on /api/users/:username", () => {
   test("should respond with status 200 and a single user object on a key of user", () => {
     const username = "lurker";
     return request(app)
@@ -615,9 +615,9 @@ describe.only("GET request on /api/users/:username", () => {
 
 //-------ERROR handling GET request on /api/users/:username
 
-describe.only("ERROR handling GET request on /api/users/:username", () => {
-  test("should respond with status 404 - user not found for valid but non-existent username", () => {
-    const username = "NOT_A_USERNAME";
+describe("ERROR handling GET request on /api/users/:username", () => {
+  test("should respond with status 404 - user not found for non-existent username", () => {
+    const username = 9999;
     return request(app)
       .get(`/api/users/${username}`)
       .expect(404)
@@ -626,3 +626,4 @@ describe.only("ERROR handling GET request on /api/users/:username", () => {
       });
   });
 });
+    

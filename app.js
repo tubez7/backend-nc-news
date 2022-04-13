@@ -32,6 +32,8 @@ app.get(`/api/articles/:article_id`, getArticleById);
 
 app.get(`/api/users`, getUsers);
 
+app.get(`/api/users/:username`, getUser);
+
 app.get(`/api/articles/:article_id/comments`, getCommentsByArticleId);
 
 app.patch(`/api/articles/:article_id`, patchArticleById);
@@ -39,8 +41,6 @@ app.patch(`/api/articles/:article_id`, patchArticleById);
 app.post(`/api/articles/:article_id/comments`, postCommentById);
 
 app.delete(`/api/comments/:comment_id`, deleteCommentById);
-
-app.get(`/api/users/:username`, getUser);
 
 //-------GENERIC ENDPOINT ERROR CATCH-------
 
