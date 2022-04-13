@@ -42,6 +42,12 @@ exports.updateCommentById = (commentId, vote) => {
       [commentId, vote]
     )
     .then((comment) => {
+      if (comment.rows.length === 0) {
+        return Promise.reject({
+          status: 404,
+          msg: `comment ${commentId} not found`,
+        });
+      }
       return comment.rows[0];
     });
 };

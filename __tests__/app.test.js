@@ -629,7 +629,7 @@ describe("ERROR handling GET request on /api/users/:username", () => {
 
 //-------PATCH request on /api/comments/:comment_id
 
-describe.only("PATCH request on /api/comments/:comment_id", () => {
+describe("PATCH request on /api/comments/:comment_id", () => {
   test("status 200: request body object should update the vote property of the comment and respond with a comment object on key of comment", () => {
     const commentId = 1;
     const vote = { inc_votes: 1 };
@@ -668,6 +668,65 @@ describe.only("PATCH request on /api/comments/:comment_id", () => {
             created_at: expect.any(String),
           })
         );
+      });
+  });
+});
+
+//-------ERROR handling PATCH request on /api/comments/:comment_id
+
+describe("ERROR handling PATCH request on /api/comments/:comment_id", () => {
+  test("should respond with status 400 - bad request when comment_id is not a number", () => {
+    const commentId = "NOT_A_NUMBER";
+    const vote = { inc_votes: 1 };
+    return request(app)
+      .patch(`/api/comments/${commentId}`)
+      .send(vote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("should should respond with status 400 - bad request when vote object property is not a number", () => {
+    const commentId = 1;
+    const vote = { inc_votes: "NOT_A_NUMBER" };
+    return request(app)
+      .patch(`/api/comments/${commentId}`)
+      .send(vote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("should should respond with status 400 - bad request when vote object is not provided", () => {
+    const commentId = 1;
+    const vote = { NOT_VALID: 1 };
+    return request(app)
+      .patch(`/api/comments/${commentId}`)
+      .send(vote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("should should respond with status 400 - bad request when vote object is not provided", () => {
+    const commentId = 1;
+    return request(app)
+      .patch(`/api/comments/${commentId}`)
+      .send()
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("should respond with status 404 - article not found for valid but non-existent article_id", () => {
+    const commentId = 9999;
+    const vote = { inc_votes: 1 };
+    return request(app)
+      .patch(`/api/comments/${commentId}`)
+      .send(vote)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`comment ${commentId} not found`);
       });
   });
 });
