@@ -297,7 +297,7 @@ describe("ERROR handling GET request on /api/articles/:article_id", () => {
 //-------PATCH request on /api/articles/:article_id
 
 describe("PATCH request on /api/articles/:article_id", () => {
-  test("status: 201 - request body object should update the vote property of the article and respond with an article object on key of article", () => {
+  test("status: 200 - request body object should update the vote property of the article and respond with an article object on key of article", () => {
     const articleId = 1;
     const vote = { inc_votes: 1 };
     return request(app)
@@ -626,4 +626,48 @@ describe("ERROR handling GET request on /api/users/:username", () => {
       });
   });
 });
-    
+
+//-------PATCH request on /api/comments/:comment_id
+
+describe.only("PATCH request on /api/comments/:comment_id", () => {
+  test("status 200: request body object should update the vote property of the comment and respond with a comment object on key of comment", () => {
+    const commentId = 1;
+    const vote = { inc_votes: 1 };
+    return request(app)
+      .patch(`/api/comments/${commentId}`)
+      .send(vote)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toBeInstanceOf(Object);
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+            votes: 17,
+            author: "butter_bridge",
+            article_id: 9,
+            created_at: expect.any(String),
+          })
+        );
+      });
+  });
+  test("status 200: should be the same result when vote is a negative integer", () => {
+    const commentId = 1;
+    const vote = { inc_votes: -1 };
+    return request(app)
+      .patch(`/api/comments/${commentId}`)
+      .send(vote)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comment).toBeInstanceOf(Object);
+        expect(body.comment).toEqual(
+          expect.objectContaining({
+            body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+            votes: 15,
+            author: "butter_bridge",
+            article_id: 9,
+            created_at: expect.any(String),
+          })
+        );
+      });
+  });
+});

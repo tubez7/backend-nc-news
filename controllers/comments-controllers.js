@@ -3,13 +3,14 @@ const {
   insertCommentById,
   fetchCommentsByArticleId,
   removeCommentById,
+  updateCommentById,
 } = require("../models/comments-models");
 
 exports.getCommentsByArticleId = (req, res, next) => {
   const { article_id: articleId } = req.params;
   Promise.all([
-    fetchCommentsByArticleId(articleId), 
-    checkArticleExists(articleId), 
+    fetchCommentsByArticleId(articleId),
+    checkArticleExists(articleId),
   ])
     .then(([comments]) => {
       res.status(200).send({ comments });
@@ -20,8 +21,8 @@ exports.getCommentsByArticleId = (req, res, next) => {
 };
 
 exports.postCommentById = (req, res, next) => {
-  const { article_id: articleId } = req.params; 
-  const { username, body: commentBody } = req.body; 
+  const { article_id: articleId } = req.params;
+  const { username, body: commentBody } = req.body;
 
   insertCommentById(commentBody, articleId, username)
     .then((comment) => {
@@ -42,5 +43,16 @@ exports.deleteCommentById = (req, res, next) => {
       next(err);
     });
 };
-      
 
+exports.patchCommentById = (req, res, next) => {
+  const { inc_votes: vote } = req.body;
+  const { comment_id: commentId } = req.params;
+  updateCommentById(commentId, vote)
+    .then((comment) => {
+      res.status(200).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+  

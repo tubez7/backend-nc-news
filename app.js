@@ -3,7 +3,7 @@ const { handleCustomErrors, handlePsqlErrors, handleServerErrors } = require("./
 const { getTopics } = require("./controllers/topics-controllers.js");
 const { getArticleById, patchArticleById, getArticles } = require("./controllers/articles-controllers.js");
 const { getUsers, getUser } = require("./controllers/users-controllers");
-const { postCommentById, getCommentsByArticleId, deleteCommentById } = require("./controllers/comments-controllers");
+const { postCommentById, getCommentsByArticleId, deleteCommentById, patchCommentById } = require("./controllers/comments-controllers");
 const { getApi } = require("./controllers/api-controllers");
 const cors = require("cors");
 
@@ -37,6 +37,8 @@ app.get(`/api/users/:username`, getUser);
 app.get(`/api/articles/:article_id/comments`, getCommentsByArticleId);
 
 app.patch(`/api/articles/:article_id`, patchArticleById);
+
+app.patch(`/api/comments/:comment_id`, patchCommentById)
 
 app.post(`/api/articles/:article_id/comments`, postCommentById);
 
