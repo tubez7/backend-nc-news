@@ -1,11 +1,8 @@
 const express = require("express");
 const { handleCustomErrors, handlePsqlErrors, handleServerErrors } = require("./errors/index");
-const { getTopics } = require("./controllers/topics-controllers.js");
-const { getArticleById, patchArticleById, getArticles } = require("./controllers/articles-controllers.js");
-const { getUsers, getUser } = require("./controllers/users-controllers");
-const { postCommentById, getCommentsByArticleId, deleteCommentById, patchCommentById } = require("./controllers/comments-controllers");
-const { getApi } = require("./controllers/api-controllers");
+
 const cors = require("cors");
+const apiRouter = require("./routes/api-router");
 
 //-------APP-------
 
@@ -20,29 +17,9 @@ app.use((req, res, next) => {
   next();
 });
 
-//-------ENDPOINTS-------
+//-------ROUTER-------
 
-app.get(`/api`, getApi);
-
-app.get(`/api/topics`, getTopics); 
-
-app.get(`/api/articles`, getArticles);
-
-app.get(`/api/articles/:article_id`, getArticleById);
-
-app.get(`/api/users`, getUsers);
-
-app.get(`/api/users/:username`, getUser);
-
-app.get(`/api/articles/:article_id/comments`, getCommentsByArticleId);
-
-app.patch(`/api/articles/:article_id`, patchArticleById);
-
-app.patch(`/api/comments/:comment_id`, patchCommentById);
-
-app.post(`/api/articles/:article_id/comments`, postCommentById);
-
-app.delete(`/api/comments/:comment_id`, deleteCommentById);
+app.use("/api", apiRouter);
 
 //-------GENERIC ENDPOINT ERROR CATCH-------
 
@@ -61,10 +38,3 @@ app.use(handleServerErrors);
 //--------------
 
 module.exports = app;
-  
-
-
-
-
-
-
