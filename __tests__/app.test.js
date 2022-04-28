@@ -730,3 +730,30 @@ describe("ERROR handling PATCH request on /api/comments/:comment_id", () => {
       });
   });
 });
+
+//-------POST request on /api/articles
+
+describe("POST request on /api/articles", () => {
+  test("should add article to the db. Responds with status: 201 and the posted article on a key of article", () => {
+    const article = { author: "rogersop", title: "test_title", body: "test_body", topic: "cats" };
+    return request(app)
+      .post(`/api/articles`)
+      .send(article)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article).toBeInstanceOf(Object);
+        expect(body.article).toEqual(
+          expect.objectContaining({
+            author: "rogersop",
+            title: "test_title",
+            body: "test_body",
+            topic: "cats",
+            article_id: 13,
+            votes: 0,
+            comment_count: 0,
+            created_at: expect.any(String),
+          })
+        );
+      });
+  });
+});
