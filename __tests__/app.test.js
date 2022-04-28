@@ -465,7 +465,7 @@ describe("ERROR handling POST request on /api/articles/:article_id/comments", ()
         expect(body.msg).toBe("bad request");
       });
   });
-  test("should respond with 400 bad request when request body is incorrectly formatted ", () => {
+  test("should respond with 400 bad request when request body is incorrectly formatted", () => {
     const articleId = 1;
     const comment = { username: "rogersop", incorrect_key: "test_body" };
     return request(app)
@@ -755,6 +755,41 @@ describe("POST request on /api/articles", () => {
             created_at: expect.any(String),
           })
         );
+      });
+  });
+});
+
+//-------ERROR handling POST request on /api/articles
+
+describe("ERROR handling POST request on /api/articles", () => {
+  test("should respond with 400 bad request when request body is incorrectly formatted", () => {
+    const article = { author: "rogersop", incorrect_key: "test_title", body: "test_body", topic: "cats" };
+    return request(app)
+      .post(`/api/articles`)
+      .send(article)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("should respond with 400 bad request - INVALID USERNAME when username does not exist on database", () => {
+    const article = { author: "INVALID_ID", title: "test_title", body: "test_body", topic: "cats" };
+    return request(app)
+      .post(`/api/articles`)
+      .send(article)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request - INVALID USERNAME");
+      });
+  });
+  test("should respond with 400 bad request - INVALID TOPIC when topic does not exist on database", () => {
+    const article = { author: "rogersop", title: "test_title", body: "test_body", topic: "NOT_A_TOPIC" };
+    return request(app)
+      .post(`/api/articles`)
+      .send(article)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request - INVALID TOPIC");
       });
   });
 });
