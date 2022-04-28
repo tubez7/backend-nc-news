@@ -97,3 +97,17 @@ exports.checkArticleExists = (articleId) => {
       }
     });
 };
+
+exports.insertArticle = (author, title, body, topic) => {
+  return db
+    .query(
+      `INSERT INTO articles (author, title, body, topic) 
+  VALUES ($1, $2, $3, $4) 
+  RETURNING article_id;`,
+      [author, title, body, topic]
+    )
+    .then(({ rows }) => {
+      const { article_id: articleId } = rows[0];
+      return this.fetchArticleById(articleId);
+    });
+};

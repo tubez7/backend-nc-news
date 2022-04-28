@@ -112,7 +112,7 @@
     }
   },
   "POST /api/articles/:article_id/comments": {
-    "description": "posts comment for specified article and serves an object of the posted comment",
+    "description": "posts a comment for specified article and serves an object of the posted comment",
     "queries": [],
     "exampleRequest": {
       "username": "grumpy19",
@@ -124,6 +124,26 @@
       "article_id": 4,
       "author": "grumpy19",
       "votes": 0,
+      "created_at": "2020-11-03T09:12:00.000Z"
+    }
+  },
+  "POST /api/articles": {
+    "description": "posts an article and serves an object of the posted article",
+    "queries": [],
+    "exampleRequest": {
+      "author": "grumpy19",
+      "title": "An Article Title",
+      "body": "Nobis consequatur animi. Ullam nobis quaerat voluptates veniam.",
+      "topic": "cooking"
+    },
+    "exampleResponse": {
+      "author": "grumpy19",
+      "title": "An Article Title",
+      "body": "Nobis consequatur animi. Ullam nobis quaerat voluptates veniam.",
+      "topic": "cooking",
+      "article_id": 4,
+      "votes": 0,
+      "comment_count": 0,
       "created_at": "2020-11-03T09:12:00.000Z"
     }
   },

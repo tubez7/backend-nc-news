@@ -39,6 +39,7 @@ describe("GET request on /api", () => {
             "GET /api/articles/:article_id/comments": expect.any(Object),
             "PATCH /api/articles/:article_id": expect.any(Object),
             "POST /api/articles/:article_id/comments": expect.any(Object),
+            "POST /api/articles": expect.any(Object),
             "DELETE /api/comments/:comment_id": expect.any(Object),
           })
         );
@@ -464,7 +465,7 @@ describe("ERROR handling POST request on /api/articles/:article_id/comments", ()
         expect(body.msg).toBe("bad request");
       });
   });
-  test("should respond with 400 bad request when request body is incorrectly formatted ", () => {
+  test("should respond with 400 bad request when request body is incorrectly formatted", () => {
     const articleId = 1;
     const comment = { username: "rogersop", incorrect_key: "test_body" };
     return request(app)
@@ -727,6 +728,68 @@ describe("ERROR handling PATCH request on /api/comments/:comment_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe(`comment ${commentId} not found`);
+      });
+  });
+});
+
+//-------POST request on /api/articles
+
+describe("POST request on /api/articles", () => {
+  test("should add article to the db. Responds with status: 201 and the posted article on a key of article", () => {
+    const article = { author: "rogersop", title: "test_title", body: "test_body", topic: "cats" };
+    return request(app)
+      .post(`/api/articles`)
+      .send(article)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.article).toBeInstanceOf(Object);
+        expect(body.article).toEqual(
+          expect.objectContaining({
+            author: "rogersop",
+            title: "test_title",
+            body: "test_body",
+            topic: "cats",
+            article_id: 13,
+            votes: 0,
+            comment_count: 0,
+            created_at: expect.any(String),
+          })
+        );
+      });
+  });
+});
+
+//-------ERROR handling POST request on /api/articles
+
+describe("ERROR handling POST request on /api/articles", () => {
+  test("should respond with 400 bad request when request body is incorrectly formatted", () => {
+    const article = { author: "rogersop", incorrect_key: "test_title", body: "test_body", topic: "cats" };
+    return request(app)
+      .post(`/api/articles`)
+      .send(article)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("should respond with 400 bad request - INVALID USERNAME when username does not exist on database", () => {
+    const article = { author: "INVALID_ID", title: "test_title", body: "test_body", topic: "cats" };
+    return request(app)
+      .post(`/api/articles`)
+      .send(article)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request - INVALID USERNAME");
+      });
+  });
+  test("should respond with 400 bad request - INVALID TOPIC when topic does not exist on database", () => {
+    const article = { author: "rogersop", title: "test_title", body: "test_body", topic: "NOT_A_TOPIC" };
+    return request(app)
+      .post(`/api/articles`)
+      .send(article)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request - INVALID TOPIC");
       });
   });
 });
