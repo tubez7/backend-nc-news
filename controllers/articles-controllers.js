@@ -40,9 +40,7 @@ exports.patchArticleById = (req, res, next) => {
 };
 
 exports.postArticle = (req, res, next) => {
-  // console.log(req.body, "req.body", req.params, "req.params");
-  const { author, title, body, topic } = req.body;
-  // console.log(author, title, body, topic, "article vars");
+  const { author, title, body, topic } = req.body;  
   insertArticle(author, title, body, topic)
     .then((article) => {
       res.status(201).send({ article });
@@ -51,3 +49,4 @@ exports.postArticle = (req, res, next) => {
       next(err);
     });
 };
+  

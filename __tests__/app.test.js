@@ -39,6 +39,7 @@ describe("GET request on /api", () => {
             "GET /api/articles/:article_id/comments": expect.any(Object),
             "PATCH /api/articles/:article_id": expect.any(Object),
             "POST /api/articles/:article_id/comments": expect.any(Object),
+            "POST /api/articles": expect.any(Object),
             "DELETE /api/comments/:comment_id": expect.any(Object),
           })
         );
