@@ -28,7 +28,7 @@ jobs:
           postgresql password: password
       
       - name: Test App Endpoints
-        run:  PGADATABASE=test_db PGUSER=testperson PGAPASSWORD=password npm test app
+        run:  PGDATABASE=test_db PGUSER=testperson PGPASSWORD=password npm test app
 
   deploy:
     name: Deploy
