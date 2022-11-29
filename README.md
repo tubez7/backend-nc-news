@@ -1,6 +1,6 @@
 # Northcoders News API
 
-https://richard-nc-news.herokuapp.com/api/
+https://nc-news-api.cyclic.app/api
 
 This is a news API built to interact with a databse to serve articles, comments, and users to a Reddit style front end architecture. The above link will take you to the hosted version of the API with a full list of available endpoints and expected responses.
 
